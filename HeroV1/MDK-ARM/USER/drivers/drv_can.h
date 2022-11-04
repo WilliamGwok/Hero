@@ -9,6 +9,12 @@ typedef struct
   uint8_t Data[8];
 }can_rx_info_t;
 
+typedef struct 
+{
+	CAN_HandleTypeDef *hcan;
+	uint32_t rx_id;
+}drv_can_t;
+
 void CAN1_Init(void); //CAN1初始化
 void CAN2_Init(void); //CAN2初始化
 void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig); //配置CAN标识符滤波器

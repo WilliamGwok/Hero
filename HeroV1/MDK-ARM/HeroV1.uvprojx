@@ -186,7 +186,7 @@
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\USER\drivers</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\USER\drivers;.\USER\algos;.\USER\configs;.\USER\hardwares;.\USER\tools</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -526,6 +526,56 @@
               <FileName>drv_all.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\drivers\drv_all.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>configs</GroupName>
+          <Files>
+            <File>
+              <FileName>config_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>config_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>config_status.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_status.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>hardwares</GroupName>
+          <Files>
+            <File>
+              <FileName>3508_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\hardwares\3508_motor.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>algos</GroupName>
+          <Files>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\algos\pid.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>tools</GroupName>
+          <Files>
+            <File>
+              <FileName>mathematics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\tools\mathematics.c</FilePath>
             </File>
           </Files>
         </Group>
