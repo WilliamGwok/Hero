@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "imu_sensor.h": "c",
+        "imu_protocol.h": "c"
+    }
+}
