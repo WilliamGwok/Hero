@@ -8,6 +8,9 @@
 #define friction_left_motor_id    0x206
 #define friction_right_motor_id   0x207
 
+void CAN1_Get_Data(uint32_t id, uint8_t *data);
+void CAN2_Get_Data(uint32_t id, uint8_t *data);
+
 #endif
 
 

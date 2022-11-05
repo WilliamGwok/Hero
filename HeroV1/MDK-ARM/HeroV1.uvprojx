@@ -557,6 +557,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\hardwares\3508_motor.c</FilePath>
             </File>
+            <File>
+              <FileName>2006_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\hardwares\2006_motor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -576,6 +581,16 @@
               <FileName>mathematics.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\tools\mathematics.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>devices</GroupName>
+          <Files>
+            <File>
+              <FileName>shooting_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\devices\shooting_motor.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,7 +1,5 @@
 #include "config_pid.h"
 
-
-
 pid_info_t feed_motor_pid_speed_info = 
 {
 	.kp = 0.0f,

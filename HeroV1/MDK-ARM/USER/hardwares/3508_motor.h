@@ -30,8 +30,12 @@ typedef struct motor_3508_t
 	pid_t                  *pid_speed;
 	pid_t                  *pid_angle;
 	drv_can_t              *can;
-	
+	void                  (*init)(struct motor_3508_t *motor);
+	void                  (*update)(struct motor_3508_t *motor,uint8_t *rxBuf);
 }motor_3508_t;
+
+void motor_3508_init(motor_3508_t *motor);
+void motor_3508_update(motor_3508_t *motor,uint8_t *rxBuf);
 
 
 #endif

@@ -1,16 +1,13 @@
-#include "3508_motor.h"
+#include "2006_motor.h"
 #include "string.h"
 #include "config_status.h"
 #include "pid.h"
 #include "mathematics.h"
 
-extern uint8_t can1_tx_buf[16];
 extern uint8_t can2_tx_buf[16];
-extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
-
-void motor_3508_info_init(motor_3508_info_t *info)
+void motor_2006_info_init(motor_2006_info_t *info)
 {
 	info->offline_cnt = 5;
 	info->offline_cnt_max = 5;
@@ -18,19 +15,19 @@ void motor_3508_info_init(motor_3508_info_t *info)
 	info->status = DEV_OFFLINE;
 }
 
-void motor_3508_init(motor_3508_t *motor)
+void motor_2006_init(motor_2006_t *motor)
 {
-	memset(motor->base_info,0,sizeof(motor_3508_base_info_t));
+	memset(motor->base_info,0,sizeof(motor_2006_base_info_t));
 	
-	motor_3508_info_init(motor->info);
+	motor_2006_info_init(motor->info);
 	
 	if(motor->pid_angle != NULL) pid_init(motor->pid_angle);
 	if(motor->pid_speed != NULL) pid_init(motor->pid_speed);
 }
 
-void motor_3508_update(motor_3508_t *motor,uint8_t *rxBuf)
+void motor_2006_update(motor_2006_t *motor,uint8_t *rxBuf)
 {
-	motor_3508_base_info_t *base_info = motor->base_info;
+	motor_2006_base_info_t *base_info = motor->base_info;
 	int16_t last_angle = base_info->angle;
 	
 	base_info->angle = rxBuf[0];
@@ -39,10 +36,8 @@ void motor_3508_update(motor_3508_t *motor,uint8_t *rxBuf)
 	base_info->speed = rxBuf[2];
 	base_info->speed <<= 8;
 	base_info->speed |= rxBuf[3];
-	base_info->current = rxBuf[4];
-	base_info->current <<= 8;
-	base_info->current |= rxBuf[5];
-	base_info->temperature = rxBuf[6];
+	base_info->torque = rxBuf[4];
+	base_info->torque <<= 8;
 	
 	motor->info->angle_add = base_info->angle - last_angle;
 	
@@ -59,3 +54,6 @@ void motor_3508_update(motor_3508_t *motor,uint8_t *rxBuf)
 	motor->info->offline_cnt = 0;
 	motor->info->status = DEV_ONLINE;
 }
+
+
+
