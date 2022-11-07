@@ -100,11 +100,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
   HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN_RxInfo.Header, CAN_RxInfo.Data);
   if(hcan == &hcan1)
   {
-//    CAN1_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
+    CAN1_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
   }
   else if(hcan == &hcan2)
   {
-//    CAN2_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
+    CAN2_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
   }
   else 
   {
