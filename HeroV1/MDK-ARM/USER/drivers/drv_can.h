@@ -17,6 +17,8 @@ typedef struct
 
 void CAN1_Init(void); //CAN1初始化
 void CAN2_Init(void); //CAN2初始化
+void CAN1_Send_With_int16_to_uint8(uint32_t stdId, int16_t *dat);
+void CAN2_Send_With_int16_to_uint8(uint32_t stdId, int16_t *dat);
 void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig); //配置CAN标识符滤波器
 uint8_t CAN_SendData(CAN_HandleTypeDef *hcan, uint32_t stdId, uint8_t *dat); //CAN发送函数
 

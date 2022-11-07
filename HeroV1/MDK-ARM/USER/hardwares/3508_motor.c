@@ -3,6 +3,8 @@
 #include "config_status.h"
 #include "pid.h"
 #include "mathematics.h"
+#include "motor.h"
+#include "motor_def.h"
 
 extern uint8_t can1_tx_buf[16];
 extern uint8_t can2_tx_buf[16];
@@ -54,7 +56,6 @@ void motor_3508_update(motor_3508_t *motor,uint8_t *rxBuf)
 	
 	motor->info->angle_sum += motor->info->angle_add;
 	//角度和需要处理
-	
 	
 	motor->info->offline_cnt = 0;
 	motor->info->status = DEV_ONLINE;

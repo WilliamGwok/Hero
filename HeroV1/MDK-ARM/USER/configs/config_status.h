@@ -9,6 +9,13 @@ typedef enum DEVICE_WORK_STATE
 	DEV_OFFLINE,
 }Dev_Work_State;
 
+typedef enum
+{
+	LF,
+	RF,
+	LB,
+	RB,
+}motor_num;
 
 #endif
 
