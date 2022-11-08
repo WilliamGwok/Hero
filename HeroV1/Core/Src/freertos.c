@@ -48,7 +48,7 @@
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
-osThreadId ControlTaskHandle;
+osThreadId Control_TaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -56,7 +56,7 @@ osThreadId ControlTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
-void Control_Task(void const * argument);
+void control_task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -107,9 +107,9 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of ControlTask */
-//  osThreadDef(ControlTask, Control_Task, osPriorityAboveNormal, 0, 1024);
-//  ControlTaskHandle = osThreadCreate(osThread(ControlTask), NULL);
+  /* definition and creation of Control_Task */
+  osThreadDef(Control_Task, control_task, osPriorityAboveNormal, 0, 128);
+  Control_TaskHandle = osThreadCreate(osThread(Control_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -135,22 +135,22 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END StartDefaultTask */
 }
 
-/* USER CODE BEGIN Header_Control_Task */
+/* USER CODE BEGIN Header_control_task */
 /**
-* @brief Function implementing the ControlTask thread.
+* @brief Function implementing the Control_Task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_Control_Task */
-__weak void Control_Task(void const * argument)
+/* USER CODE END Header_control_task */
+__weak void control_task(void const * argument)
 {
-  /* USER CODE BEGIN Control_Task */
+  /* USER CODE BEGIN control_task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END Control_Task */
+  /* USER CODE END control_task */
 }
 
 /* Private application code --------------------------------------------------*/

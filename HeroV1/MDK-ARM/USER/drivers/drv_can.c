@@ -122,7 +122,6 @@ void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig)
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-  
   if(hcan == &hcan1)
   {
 		HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &hcan1RxFrame.header, hcan1RxFrame.data);

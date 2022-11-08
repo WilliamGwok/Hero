@@ -19,10 +19,10 @@ float position_motor_speed_pid_param[7]       = {0,0,0,0,0,10000,9000};
 float friction_left_motor_speed_pid_param[7]  = {0,0,0,0,0,6000,10000};
 float friction_right_motor_speed_pid_param[7] = {0,0,0,0,0,6000,10000};
 
-int16_t can1_send_buff[4];
-int16_t can2_send_buff[4];
+int16_t can1_shoot_send_buff[4];
+int16_t can2_shoot_send_buff[4];
 
-float feed_motor_tar = 500;
+float feed_motor_tar = 0;
 float position_motor_tar = 0;
 float friction_left_motor_tar = 0;
 float friction_right_tar = 0;
@@ -49,16 +49,16 @@ void Shooting_Ctrl(void)
 	friction_left_motor.heartbeat(&friction_left_motor);
 	friction_right_motor.heartbeat(&friction_right_motor);
 		
-	can1_send_buff[feed_motor.id.buff_p] = feed_motor.c_angle(&feed_motor,feed_motor_tar);
+	can1_shoot_send_buff[feed_motor.id.buff_p] = feed_motor.c_angle(&feed_motor,feed_motor_tar);
 		
-	can2_send_buff[position_motor.id.buff_p]        = position_motor.c_speed(&position_motor,position_motor_tar);
-	can2_send_buff[friction_left_motor.id.buff_p]   = friction_left_motor.c_speed(&friction_left_motor,friction_left_motor_tar);
-	can2_send_buff[friction_right_motor.id.buff_p]  = friction_right_motor.c_speed(&friction_right_motor,friction_right_tar);
+	can2_shoot_send_buff[position_motor.id.buff_p]        = position_motor.c_speed(&position_motor,position_motor_tar);
+	can2_shoot_send_buff[friction_left_motor.id.buff_p]   = friction_left_motor.c_speed(&friction_left_motor,friction_left_motor_tar);
+	can2_shoot_send_buff[friction_right_motor.id.buff_p]  = friction_right_motor.c_speed(&friction_right_motor,friction_right_tar);
 		
-	CAN1_Send_With_int16_to_uint8(feed_motor.id.tx_id,can1_send_buff);
+	CAN1_Send_With_int16_to_uint8(feed_motor.id.tx_id,can1_shoot_send_buff);
 		
-	CAN2_Send_With_int16_to_uint8(position_motor.id.tx_id,can2_send_buff);
-	CAN2_Send_With_int16_to_uint8(friction_left_motor.id.tx_id,can2_send_buff);
-	CAN2_Send_With_int16_to_uint8(friction_right_motor.id.tx_id,can2_send_buff);
+	CAN2_Send_With_int16_to_uint8(position_motor.id.tx_id,can2_shoot_send_buff);
+	CAN2_Send_With_int16_to_uint8(friction_left_motor.id.tx_id,can2_shoot_send_buff);
+	CAN2_Send_With_int16_to_uint8(friction_right_motor.id.tx_id,can2_shoot_send_buff);
 }
 

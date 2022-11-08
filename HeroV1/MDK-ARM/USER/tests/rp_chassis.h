@@ -5,9 +5,9 @@
   *                              
   *                   
   * @FileName   : rp_chassis.h   
-  * @Version    : v1.0		
+  * @Version    : v1.2		
   * @Author     : hwx			
-  * @Date       : 2022-11-07         
+  * @Date       : 2022-11-08         
   * @Description: 基本的底盘包，后续有待增加 1.直线修正 2.旋转量占比限制
   *
   *               目前无用变量：底盘状态            -- chassis_work_sate
@@ -21,7 +21,10 @@
   *
   ******************************************************************************
  */
- 
+  /*版本更新说明
+  * V1.1 解决了函数名称错误导致的编译报错,有待解决由于驱动不同导致的can发送问题
+  * V1.2 解决了一系列问题
+  * */
 /*******************************************************************************
 *                               底盘包使用教程
 * @Tips   : 在使用底盘包之前请使用电机包注册好四个底盘电机
@@ -76,8 +79,11 @@ extern CAN_HandleTypeDef hcan2;
 #define CHASSIS_CYCLE_DIV_FRONT (50)    /*旋转百分比默认值*/
 
 
-#define POWER_LIMIT_OFF (0)
-#define POWER_LIMIT_ON  (1)
+#define CHASSIS_POWER_LIMIT_OFF (0)
+#define CHASSIS_POWER_LIMIT_ON  (1)
+
+#define CHASSIS_TOP_CALC_OFF (0)
+#define CHASSIS_TOP_CALC_ON  (1)
 
 
 #define c_abs(x) 					((x)>0? (x):(-(x)))
@@ -87,7 +93,7 @@ extern CAN_HandleTypeDef hcan2;
 /** 
   * @brief  底盘初始化结构体定义 
   */ 
-typedef struct Chassis_Init_structure
+typedef struct
 {
   motor_t *motor_LF;       		 /*!< 左前轮电机初始化
 									@ref 在rp_motor_pack中初始化 */
@@ -117,31 +123,63 @@ typedef enum
 
 }chassic_work_state_e;
 
+
+/** 
+  * @brief  底盘基本信息->目标信息
+  */ 
+typedef __packed struct 
+{
+	int16_t front_speed;  /*!< @ref 目标前进速度 */
+	int16_t right_speed;  /*!< @ref 目标左移速度 */
+	int16_t cycle_speed;  /*!< @ref 目标旋转速度 */	
+	
+}chassis_target_t;
+
+/** 
+  * @brief  底盘基本信息->测量信息
+  */ 
+typedef __packed struct 
+{
+	int16_t front_speed; /*!< @ref 当前前进速度 */
+	int16_t right_speed; /*!< @ref 当前左移速度 */
+	int16_t cycle_speed; /*!< @ref 当前旋转速度 */
+	
+	float   top_detal_angle;  /*!< @ref 小陀螺解算角度 */
+	
+}chassis_measure_t;
+
+
+/** 
+  * @brief  底盘基本信息->输出信息
+  */ 
+typedef __packed struct 
+{
+	int16_t motor_LF_speed; /*!< @ref 左前输出速度 */
+	int16_t motor_RF_speed; /*!< @ref 右前输出速度 */
+	int16_t motor_LB_speed; /*!< @ref 左后输出速度 */
+	int16_t motor_RB_speed; /*!< @ref 右后输出速度 */
+	
+	int16_t motor_LF_current; /*!< @ref 左前输出电流 */
+	int16_t motor_RF_current; /*!< @ref 右前输出电流 */
+	int16_t motor_LB_current; /*!< @ref 左后输出电流 */
+	int16_t motor_RB_current; /*!< @ref 右后输出电流 */
+	
+}chassis_output_t;
+
+
 /** 
   * @brief  底盘基本信息定义
   */ 
 typedef __packed struct 
 {
-	int16_t target_front_speed;  /*!< @ref 目标前进速度 */
-	int16_t target_right_speed;  /*!< @ref 目标左移速度 */
-	int16_t target_cycle_speed;  /*!< @ref 目标旋转速度 */
 	
-	int16_t measure_front_speed; /*!< @ref 当前前进速度 */
-	int16_t measure_right_speed; /*!< @ref 当前左移速度 */
-	int16_t measure_cycle_speed; /*!< @ref 当前旋转速度 */
-	
-	int16_t motor_LF_ouput_speed; /*!< @ref 左前输出速度 */
-	int16_t motor_RF_ouput_speed; /*!< @ref 右前输出速度 */
-	int16_t motor_LB_ouput_speed; /*!< @ref 左后输出速度 */
-	int16_t motor_RB_ouput_speed; /*!< @ref 右后输出速度 */
-	
-	int16_t motor_LF_ouput_current; /*!< @ref 左前输出电流 */
-	int16_t motor_RF_ouput_current; /*!< @ref 右前输出电流 */
-	int16_t motor_LB_ouput_current; /*!< @ref 左后输出电流 */
-	int16_t motor_RB_ouput_current; /*!< @ref 右后输出电流 */
-	
-	
+	chassis_target_t     target;
+	chassis_measure_t    measure;
+	chassis_output_t     output;
+
 }chassis_base_info_t;
+
+
 
 /** 
   * @brief  底盘工作状态信息定义
@@ -149,13 +187,25 @@ typedef __packed struct
 typedef struct
 {
 	
-	uint8_t              chassis_cycle_div_front;   /*!< @ref 底盘旋转占比 (0 ~ 100) */
-	uint8_t              chassis_power_limit_state; /*!< @ref 裁判系统功率限制状态(ON/OFF)*/
-	uint16_t 			 chassis_output_max; 		/*!< @ref 底盘最大输出 */
-	uint16_t 			 chassis_speed_max;  		/*!< @ref 底盘最高速度 */
-	chassic_work_state_e chassis_work_sate;  		/*!< @ref 底盘工作状态 */
+	uint8_t              rotation_ratio;    /*!< @ref 底盘旋转占比 (0 ~ 100) */
+	uint8_t              power_limit; /*!< @ref 裁判系统功率限制状态(ON/OFF)*/
+	uint8_t              top_cacl;    /*!< @ref 底盘小陀螺解算状态 (ON/OFF) */
+		
+}chassis_config_t;
+
+/** 
+  * @brief  底盘工作状态信息定义
+  */ 
+typedef struct
+{
 	
-	float               *chassis_limit_buffer;
+	chassis_config_t     config; 
+	
+	uint16_t 			 output_max; 		/*!< @ref 底盘最大输出 */
+	uint16_t 			 speed_max;  		/*!< @ref 底盘最高速度 */
+	chassic_work_state_e work_sate;  		/*!< @ref 底盘工作状态 */
+	
+	float               *power_limit_buffer;
 		
 	
 }chassis_work_info_t;
@@ -165,19 +215,23 @@ typedef struct
   * @brief  底盘类定义
   */ 
 typedef struct chassis_class_t
-{
+{	
+	/*外部电机*/
 	motor_t        		 *motor_LF;
 	motor_t        		 *motor_RF;
 	motor_t       		 *motor_LB;
 	motor_t        		 *motor_RB;
-	chassis_base_info_t  *base_info;
-	chassis_work_info_t  *work_info;
+	
+	
+	chassis_base_info_t   base_info;
+	chassis_work_info_t   work_info;
 	
 	void                (*init)(struct chassis_class_t *chassis,Chassis_InitTypeDef *Chassis_Init_structure);
-	void                (*work)(struct chassis_class_t *chassis,int16_t front , int16_t right , int16_t cycle);
-	void                (*top_calc)(struct chassis_class_t *chassis,float detal_angle, int16_t *front, int16_t *right);
-	void                (*config_cycle_div_front)(uint8_t cycle_div_front);	
+	void                (*work)(struct chassis_class_t *chassis);
+	
+	void                (*config_rotation_ratio)(uint8_t rotation_ratio);	
 	void                (*config_power_limit)(uint8_t off_or_on);
+	void                (*config_top_calc)(uint8_t off_or_on);
 
 }chassis_t;
 
@@ -191,20 +245,24 @@ typedef struct chassis_class_t
 void Chassis_Init(chassis_t * chassis , Chassis_InitTypeDef *Chassis_Init_structure);
 
 /*work*/
-void Chassis_Work(chassis_t *chassis , int16_t front , int16_t right , int16_t cycle);
+void Chassis_Work(chassis_t *chassis);
 
 /*top_calc*/
-void Chassis_Top_Speed_Calculating(chassis_t *chassis,float detal_angle, int16_t *front, int16_t *right);
+void Chassis_Top_Speed_Calculating(chassis_t *chassis);
 
 /*config_cycle_div_front*/
-void Chassis_Config_cycle_div_front(uint8_t cycle_div_front);
+void Chassis_Config_rotation_ratio(uint8_t rotation_ratio);
 
 /*config_power_limit*/
 void Chassis_Config_power_limit(uint8_t off_or_on);
 
+/*config_power_limit*/
+void Chassis_Config_power_limit(uint8_t off_or_on);
 
-/*底盘速度限制*/
-void Chassis_Speed_Limit(chassis_t *chassis, int16_t *front, int16_t *right, int16_t *cycle);
+/*config_top_calc*/
+void Chassis_config_top_calc(uint8_t off_or_on);
+
+
 
 /*底盘速度分解*/
 void Chassis_Speed_Calculating(chassis_t *chassis, int16_t front, int16_t right, int16_t cycle);

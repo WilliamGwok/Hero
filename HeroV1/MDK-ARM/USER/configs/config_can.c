@@ -32,23 +32,39 @@
 
 void CAN1_rxDataHandler(uint32_t canId, uint8_t *rxBuf)
 {
-	feed_motor.rx(&feed_motor,rxBuf,8);
-//	
-//	chassis_motor[LF].rx(&chassis_motor[LF],rxBuf,8);
-//	
-//	chassis_motor[RF].rx(&chassis_motor[RF],rxBuf,8);
-//	
-//	chassis_motor[LB].rx(&chassis_motor[LB],rxBuf,8);
-//	
-//	chassis_motor[RB].rx(&chassis_motor[RB],rxBuf,8);
+	switch(canId)
+	{
+		case feed_motor_id:
+			feed_motor.rx(&feed_motor,rxBuf,8);
+		  break;
+		case chassis_motor_LF_id:
+			chassis_motor[LF].rx(&chassis_motor[LF],rxBuf,8);
+		  break;
+		case chassis_motor_RF_id:
+			chassis_motor[RF].rx(&chassis_motor[RF],rxBuf,8);
+		  break;
+		case chassis_motor_LB_id:
+			chassis_motor[LB].rx(&chassis_motor[LB],rxBuf,8);
+		  break;
+		case chassis_motor_RB_id:
+			chassis_motor[RB].rx(&chassis_motor[RB],rxBuf,8);
+		  break;
+	}
 }
 
 void CAN2_rxDataHandler(uint32_t canId, uint8_t *rxBuf)
 {
-  position_motor.rx(&position_motor,rxBuf,8);
-	
-	friction_left_motor.rx(&friction_left_motor,rxBuf,8);
-	
-	friction_right_motor.rx(&friction_right_motor,rxBuf,8);
+	switch(canId)
+	{
+		case position_motor_id:
+			position_motor.rx(&position_motor,rxBuf,8);
+		  break;
+		case friction_left_motor_id:
+			friction_left_motor.rx(&friction_left_motor,rxBuf,8);
+		  break;
+		case friction_right_motor_id:
+			friction_right_motor.rx(&friction_right_motor,rxBuf,8);
+		  break;
+	}
 }
 

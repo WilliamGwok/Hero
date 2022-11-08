@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\USER\drivers;.\USER\algos;.\USER\configs;.\USER\hardwares;.\USER\tools;.\USER\devices;.\USER\tests;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;.\USER\tasks;.\USER\modules</IncludePath>
+              <IncludePath>../Core/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;   ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;   ../Drivers/CMSIS/Include;   .\USER\drivers;   .\USER\algos;   .\USER\configs;   .\USER\hardwares;   .\USER\tools;   .\USER\devices;   .\USER\tests;   ../Middlewares/Third_Party/FreeRTOS/Source/include;   ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;   ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;   .\USER\tasks;   .\USER\modules</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,6 +773,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\configs\config_uart.c</FilePath>
             </File>
+            <File>
+              <FileName>config_remote.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_remote.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -828,16 +833,16 @@
               <FileType>1</FileType>
               <FilePath>.\USER\devices\chassis_motor.c</FilePath>
             </File>
+            <File>
+              <FileName>remote.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\devices\remote.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>tests</GroupName>
+          <GroupName>rp_pack</GroupName>
           <Files>
-            <File>
-              <FileName>rp_chassis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\tests\rp_chassis.c</FilePath>
-            </File>
             <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
@@ -1473,6 +1478,11 @@
               <FileName>control_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\tasks\control_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>rp_chassis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\tests\rp_chassis.c</FilePath>
             </File>
           </Files>
         </Group>
