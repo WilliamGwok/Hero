@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;   ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;   ../Drivers/CMSIS/Include;   .\USER\drivers;   .\USER\algos;   .\USER\configs;   .\USER\hardwares;   .\USER\tools;   .\USER\devices;   .\USER\tests;   ../Middlewares/Third_Party/FreeRTOS/Source/include;   ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;   ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;   .\USER\tasks;   .\USER\modules</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\USER\drivers;.\USER\algos;.\USER\configs;.\USER\hardwares;.\USER\tools;.\USER\devices;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;.\USER\tasks;.\USER\modules;.\USER\rp_pack</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -781,21 +781,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>hardwares</GroupName>
-          <Files>
-            <File>
-              <FileName>3508_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\hardwares\3508_motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>2006_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\hardwares\2006_motor.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>algos</GroupName>
           <Files>
             <File>
@@ -838,6 +823,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\devices\remote.c</FilePath>
             </File>
+            <File>
+              <FileName>gimbal_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\devices\gimbal_motor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -846,17 +836,17 @@
             <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\tests\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\USER\tests\motor.h</FilePath>
+              <FilePath>.\USER\rp_pack\motor.c</FilePath>
             </File>
             <File>
               <FileName>motor_def.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\USER\tests\motor_def.h</FilePath>
+              <FilePath>.\USER\rp_pack\motor_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>rp_chassis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\rp_pack\rp_chassis.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1479,11 +1469,6 @@
               <FileType>1</FileType>
               <FilePath>.\USER\tasks\control_task.c</FilePath>
             </File>
-            <File>
-              <FileName>rp_chassis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\tests\rp_chassis.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -1498,6 +1483,11 @@
               <FileName>chassis.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\modules\chassis.c</FilePath>
+            </File>
+            <File>
+              <FileName>gimbal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\modules\gimbal.c</FilePath>
             </File>
           </Files>
         </Group>

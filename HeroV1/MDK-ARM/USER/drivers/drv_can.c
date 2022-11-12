@@ -16,29 +16,6 @@ CAN_RxFrameTypeDef hcan2RxFrame;
 uint8_t can1_tx_buf[16];//CAN1发送缓存(0x200 0x1FF)
 uint8_t can2_tx_buf[16];//CAN2发送缓存(0x200 0x1FF)
 
-//can_rx_info_t CAN_RxInfo;
-
-//drv_can_t feed_motor_can_driver = 
-//{
-//	.hcan   = &hcan1,
-//	.rx_id  = feed_motor_id,
-//};
-
-//drv_can_t position_motor_can_driver = 
-//{
-//	.hcan   = &hcan2,
-//	.rx_id  = position_motor_id,
-//};
-//drv_can_t friction_left_motor_can_driver = 
-//{
-//	.hcan   = &hcan2,
-//	.rx_id  = friction_left_motor_id,
-//};
-//drv_can_t friction_right_motor_can_driver = 
-//{
-//	.hcan   = &hcan2,
-//	.rx_id  = friction_right_motor_id,
-//};
 /**
   * @brief  CAN1初始化
   * @param  
@@ -97,28 +74,6 @@ void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig)
 	sFilterConfig->FilterActivation = ENABLE;				// 激活滤波器
 	sFilterConfig->SlaveStartFilterBank = 0;
 }
-
-///**
-//  * @brief  can接受中断，在stm32f4xx_hal_can.c内弱定义
-//  * @param  
-//  * @retval 
-//  */
-//void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
-//{
-//  HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN_RxInfo.Header, CAN_RxInfo.Data);
-//  if(hcan == &hcan1)
-//  {
-//    CAN1_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
-//  }
-//  else if(hcan == &hcan2)
-//  {
-//    CAN2_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
-//  }
-//  else 
-//  {
-//    return;
-//  }
-//}
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {

@@ -2,11 +2,17 @@
 #define __CONFIG_STATUS_H
 
 #include "stm32f4xx_hal.h"
+#include "gimbal.h"
+#include "shooting.h"
+#include "chassis.h"
+#include "remote.h"
+#include "rp_chassis.h"
+#include "string.h"
 
 typedef enum DEVICE_WORK_STATE
 {
-	DEV_ONLINE,
-	DEV_OFFLINE,
+	DEV_ONLINE = 1,
+	DEV_OFFLINE = 0,
 }Dev_Work_State;
 
 typedef enum
@@ -16,6 +22,9 @@ typedef enum
 	LB,
 	RB,
 }motor_num;
+
+void Car_Sleep(void);
+void Cal_Pulse(void);
 
 #endif
 

@@ -423,7 +423,7 @@ void rc_base_info_update(rc_base_info_t *info, uint8_t *rxBuf)
 
 /**
   * @brief  Ò£¿ØÆ÷ÐÅÏ¢¼ì²é
-  * @note   ??????????
+  * @note   
   */
 void rc_base_info_check(rc_base_info_t *info)
 {

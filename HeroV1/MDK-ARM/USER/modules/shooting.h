@@ -3,8 +3,8 @@
 
 #include "stm32f4xx_hal.h"
 
-void Shooting_Init(void);
-void Shooting_Ctrl(void);
+void Shooting_Init_All(void);
+void Shooting_Heartbeat(void);
 
 #endif
 

@@ -13,8 +13,9 @@
 #define friction_left_motor_id    0x206
 #define friction_right_motor_id   0x207
 
-//void CAN1_Get_Data(uint32_t id, uint8_t *data);
-//void CAN2_Get_Data(uint32_t id, uint8_t *data);
+#define gimbal_motor_pitch_id 0x205
+#define gimbal_motor_yaw_id   0x208
+
 void CAN1_rxDataHandler(uint32_t canId, uint8_t *rxBuf);
 void CAN2_rxDataHandler(uint32_t canId, uint8_t *rxBuf);
 

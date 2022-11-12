@@ -147,6 +147,9 @@ void motor_class_init(struct motor_class_t *motor)
 	motor->c_angle = motor_pid_angle;
 	motor->c_posit = motor_pid_position;	
 	
+	motor->c_pid1 = motor_pid_single;
+	motor->c_pid2 = motor_pid_double;		
+	
 	motor->state.init_flag = M_INIT;
 }
 
@@ -396,6 +399,33 @@ float motor_pid_ctrl(motor_pid_t *out, motor_pid_t *inn, float meas1, float meas
 		
 		return inn->info.out;	
 	}
+}
+
+/**
+ *	@brief	双环pid控制 
+ *  @return 返回计算结果
+ */
+float motor_pid_double(motor_pid_t *out, motor_pid_t *inn, float meas1, float meas2, float tar, char err_cal_mode)
+{
+
+	out->info.target = tar;
+
+	return motor_pid_ctrl(out,inn,meas1,meas2,err_cal_mode);
+
+}
+
+
+/**
+ *	@brief	单pid控制 
+ *  @return 返回计算结果
+ */
+float motor_pid_single(motor_pid_t *out, float meas1, float tar)
+{
+
+	out->info.target = tar;
+
+	return motor_pid_ctrl(out,NULL,meas1,NULL,0);
+
 }
 
 /**
