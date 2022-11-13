@@ -12,6 +12,18 @@ typedef struct Mean_Filter_Struct{
 	float SPEED[FILTER_LEN];   
 }Mean_Filter_t;
 
+typedef struct Low_Pass_Struct{
+	
+}Low_Pass_t;
+
+typedef struct Filter_Struct{
+	
+	Mean_Filter_t Mean_Filter;
+	
+	Low_Pass_t Low_Pass;
+	
+}Filter_t;
+
 float Mean_Filter_Ctrl(Mean_Filter_t * filter,float mea);
 void Mean_Filter_Init(Mean_Filter_t * filter);
 

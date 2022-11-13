@@ -1,6 +1,8 @@
 #include "mean_filter.h"
 
 //Mean_Filter_t Mean_Filter;
+//.filter->maen(3)
+
 
 void Mean_Filter_Init(Mean_Filter_t * filter)
 {
@@ -65,3 +67,6 @@ float Mean_Filter_Ctrl(Mean_Filter_t * filter,float mea)
 	
 	return out;
 }
+
+
+   
