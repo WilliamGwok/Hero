@@ -33,8 +33,28 @@ void Gimbal_Heartbeat(void)
 	Gim_Yaw.heartbeat(&Gim_Yaw);
 }
 
+void Gimbal_Send(motor_t* gimbal,int16_t buff)
+{
+  if(gimbal->id.drive_type == M_CAN1)
+	{
+		CAN1_Send_With_int16_to_uint8(gimbal->id.tx_id,can1_gimbal_send_buff);
+	}
+	if(gimbal->id.drive_type == M_CAN2)
+	{
+		CAN2_Send_With_int16_to_uint8(gimbal->id.tx_id,can2_gimbal_send_buff);
+	}
+}
+
 void Gimbal_Ctrl(void)
 {
   
 }
 
+/*Part 1*/
+void Gimbal_Yaw_Mec_Ctrl(motor_t* gimbal)
+{
+	motor_rx_info_t *info = &gimbal->rx_info;
+	
+	
+	
+}
