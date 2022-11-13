@@ -5,32 +5,17 @@
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
+typedef struct {
+	CAN_RxHeaderTypeDef header;
+	uint8_t				data[8];
+} CAN_RxFrameTypeDef;
+
+CAN_RxFrameTypeDef hcan1RxFrame;
+CAN_RxFrameTypeDef hcan2RxFrame;
+
 uint8_t can1_tx_buf[16];//CAN1发送缓存(0x200 0x1FF)
 uint8_t can2_tx_buf[16];//CAN2发送缓存(0x200 0x1FF)
 
-can_rx_info_t CAN_RxInfo;
-
-drv_can_t feed_motor_can_driver = 
-{
-	.hcan   = &hcan1,
-	.rx_id  = feed_motor_id,
-};
-
-drv_can_t position_motor_can_driver = 
-{
-	.hcan   = &hcan2,
-	.rx_id  = position_motor_id,
-};
-drv_can_t friction_left_motor_can_driver = 
-{
-	.hcan   = &hcan2,
-	.rx_id  = friction_left_motor_id,
-};
-drv_can_t friction_right_motor_can_driver = 
-{
-	.hcan   = &hcan2,
-	.rx_id  = friction_right_motor_id,
-};
 /**
   * @brief  CAN1初始化
   * @param  
@@ -90,21 +75,27 @@ void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig)
 	sFilterConfig->SlaveStartFilterBank = 0;
 }
 
-/**
-  * @brief  can接受中断，在stm32f4xx_hal_can.c内弱定义
-  * @param  
-  * @retval 
-  */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-  HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN_RxInfo.Header, CAN_RxInfo.Data);
   if(hcan == &hcan1)
   {
+<<<<<<< HEAD
     CAN1_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
   }
   else if(hcan == &hcan2)
   {
     CAN2_Get_Data(CAN_RxInfo.Header.StdId, CAN_RxInfo.Data);
+=======
+		HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &hcan1RxFrame.header, hcan1RxFrame.data);
+		
+		CAN1_rxDataHandler(hcan1RxFrame.header.StdId, hcan1RxFrame.data);
+  }
+  else if(hcan == &hcan2)
+  {
+		HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &hcan2RxFrame.header, hcan2RxFrame.data);
+		
+		CAN2_rxDataHandler(hcan2RxFrame.header.StdId, hcan2RxFrame.data);
+>>>>>>> chassis
   }
   else 
   {
@@ -141,6 +132,40 @@ uint8_t CAN_SendData(CAN_HandleTypeDef *hcan, uint32_t stdId, uint8_t *dat)
 	}
 	
 	return HAL_OK;
+}
+
+void CAN1_Send_With_int16_to_uint8(uint32_t stdId, int16_t *dat)
+{
+	uint8_t data[8];
+	
+	data[0] = (uint8_t)((int16_t)dat[0] >> 8);
+	data[1] = (uint8_t)((int16_t)dat[0]);
+	data[2] = (uint8_t)((int16_t)dat[1] >> 8);
+	data[3] = (uint8_t)((int16_t)dat[1]);
+	data[4] = (uint8_t)((int16_t)dat[2] >> 8);
+	data[5] = (uint8_t)((int16_t)dat[2]);
+	data[6] = (uint8_t)((int16_t)dat[3] >> 8);
+	data[7] = (uint8_t)((int16_t)dat[3]);			
+	
+	CAN_SendData(&hcan1,stdId,data);
+	
+}
+
+void CAN2_Send_With_int16_to_uint8(uint32_t stdId, int16_t *dat)
+{
+	uint8_t data[8];
+	
+	data[0] = (uint8_t)((int16_t)dat[0] >> 8);
+	data[1] = (uint8_t)((int16_t)dat[0]);
+	data[2] = (uint8_t)((int16_t)dat[1] >> 8);
+	data[3] = (uint8_t)((int16_t)dat[1]);
+	data[4] = (uint8_t)((int16_t)dat[2] >> 8);
+	data[5] = (uint8_t)((int16_t)dat[2]);
+	data[6] = (uint8_t)((int16_t)dat[3] >> 8);
+	data[7] = (uint8_t)((int16_t)dat[3]);			
+	
+	CAN_SendData(&hcan2,stdId,data);
+	
 }
 
 void CAN_send_all(void)
