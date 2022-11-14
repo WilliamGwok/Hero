@@ -5,6 +5,8 @@ void control_task(void const * argument)
 {
   for(;;)
   {
+		imu_update(&imu);
+		
 		Cal_Pulse();
 
 		if(rc.info->status == DEV_ONLINE)

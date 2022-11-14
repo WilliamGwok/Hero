@@ -5,6 +5,7 @@
 #include "shooting.h"
 #include "gimbal.h"
 #include "chassis.h"
+#include "imu.h"
 
 void Driver_Init(void)
 {
@@ -17,6 +18,8 @@ void Driver_Init(void)
 
 void Device_Init(void)
 {
+	imu_init(&imu);
+	
 	rc_init(&rc);
 	
 	Shooting_Init_All();

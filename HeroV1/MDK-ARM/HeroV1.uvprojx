@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,USE_STDPERIPH_DRIVER,__FPU_PRESENT = 1U,ARM_MATH_CM4,__CC_ARM,__TARGET_FPU_VFP</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\USER\drivers;.\USER\algos;.\USER\configs;.\USER\hardwares;.\USER\tools;.\USER\devices;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;.\USER\tasks;.\USER\modules;.\USER\rp_pack</IncludePath>
+              <IncludePath>../Core/Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F4xx/Include; ../Drivers/CMSIS/Include; .\USER\drivers; .\USER\algos; .\USER\configs; .\USER\hardwares; .\USER\tools; .\USER\devices; ../Middlewares/Third_Party/FreeRTOS/Source/include; ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS; ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F; .\USER\tasks; .\USER\modules; .\USER\rp_pack; .\USER\devices\imu</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -778,6 +778,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\configs\config_remote.c</FilePath>
             </File>
+            <File>
+              <FileName>config_imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_imu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -803,6 +808,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\tools\mean_filter.c</FilePath>
             </File>
+            <File>
+              <FileName>ave_filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\tools\ave_filter.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -827,6 +837,11 @@
               <FileName>gimbal_motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\devices\gimbal_motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\devices\imu.c</FilePath>
             </File>
           </Files>
         </Group>
