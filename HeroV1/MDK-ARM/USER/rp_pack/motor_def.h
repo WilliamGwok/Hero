@@ -184,7 +184,8 @@ typedef struct
 	motor_pid_t            position;
 	motor_pid_t            position_in;	
 	
-	motor_pid_t            user_define;
+	motor_pid_t            imu_angle;
+	motor_pid_t            imu_angle_in;
 	
 }motor_pid_all_t; //pid×Ü»ã
 
