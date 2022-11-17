@@ -81,17 +81,20 @@ void Gimbal_Imu_Update(gimbal_t* gimbal)
 	
 	gimbal->info->pitch_speed_imu_measure = imu.base_info->pitch_dif_speed_ave;
 	
-	gimbal->info->yaw_angle_imu_measure = itm(imu.base_info->yaw_);
+	gimbal->info->yaw_angle_imu_measure = itm(imu.base_info->yaw);
 	
-	gimbal->info->pitch_angle_imu_measure = itm(imu.base_info->pitch_);
+	gimbal->info->pitch_angle_imu_measure = itm(imu.base_info->pitch);
 }
 
+/*Part 2*/
 void Gimbal_Ctrl(void)
 {
 	Gimbal.imu_update(&Gimbal);
 	
+	Gimbal.info->yaw_angle_target = 7940;
 	
-  
+  Gimbal.pitch_mec_ctrl(&Gimbal);
+	
 }
 
 /*Part 1*/

@@ -1549,6 +1549,16 @@
               <FileType>1</FileType>
               <FilePath>.\USER\drivers\drv_haltick.c</FilePath>
             </File>
+            <File>
+              <FileName>bmi2_defs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\devices\imu\bmi2_defs.h</FilePath>
+            </File>
+            <File>
+              <FileName>bmi2_ois.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\devices\imu\bmi2_ois.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

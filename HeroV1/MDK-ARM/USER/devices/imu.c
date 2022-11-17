@@ -9,6 +9,7 @@
 #include "imu.h"
 #include "config_imu.h"
 #include "bmi.h"
+#include "bmi2_defs.h"
 #include "stdbool.h"
 #include "mathematics.h"
 //#include "rp_math.h"
@@ -48,6 +49,7 @@ ave_filter_t imu_yaw_dif_speed_ave_filter;
   */
 void imu_init(imu_t *imu)
 {
+	while(BMI_Init()!=BMI2_OK){}
 	imu_info_init(imu->info);
 }
 
