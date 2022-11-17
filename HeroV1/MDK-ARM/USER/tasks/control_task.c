@@ -7,13 +7,11 @@ void control_task(void const * argument)
   {
 		imu_update(&imu);
 		
-		Gimbal_Ctrl();
-		
 		Cal_Pulse();
 
 		if(rc.info->status == DEV_ONLINE)
 		{
-      
+      Gimbal_Ctrl();
 			
 			Chassis_Ctrl();
 		}

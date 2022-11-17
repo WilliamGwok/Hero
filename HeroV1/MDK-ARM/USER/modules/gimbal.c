@@ -6,6 +6,17 @@
 extern motor_t Gim_Yaw;
 extern motor_t Gim_Pitch;
 
+/*
+	float	  kp;
+	float 	ki;
+	float 	kd;
+	
+	float   blind_err;	
+	float 	integral_max;	
+	float   iout_max;
+	float 	out_max;
+*/
+
 gimbal_info_t gimbal_info;
 
 gimbal_t Gimbal = 
@@ -19,19 +30,19 @@ gimbal_t Gimbal =
 	.pitch_imu_ctrl = Gimbal_Pitch_Imu_Ctrl,
 };
 
-float gimb_y_mec_angle_in_pid_param[7]   = {0,0,0,0,0,4000,28000};
+float gimb_y_mec_angle_in_pid_param[7]   = {-430,-5,0,0,4000,4000,28000};
 
-float gimb_y_mec_angle_pid_param[7]      = {0,0,0,0,0,0,700};
+float gimb_y_mec_angle_pid_param[7]      = {-0.7,0,0,0,0,0,700};
 
-float gimb_p_mec_angle_in_pid_param[7]   = {0,0,0,0,0,5000,28000};
+float gimb_p_mec_angle_in_pid_param[7]   = {0,0,0,0,5000,5000,28000};
 
 float gimb_p_mec_angle_pid_param[7]      = {0,0,0,0,0,0,500};
 
-float gimb_y_imu_angle_in_pid_param[7]   = {0,0,0,0,0,4000,28000};
+float gimb_y_imu_angle_in_pid_param[7]   = {0,0,0,0,4000,4000,28000};
 
 float gimb_y_imu_angle_pid_param[7]      = {0,0,0,0,0,0,700};
 
-float gimb_p_imu_angle_in_pid_param[7]   = {0,0,0,0,0,5000,28000};
+float gimb_p_imu_angle_in_pid_param[7]   = {0,0,0,0,5000,5000,28000};
 
 float gimb_p_imu_angle_pid_param[7]      = {0,0,0,0,0,0,500};
 
@@ -86,14 +97,27 @@ void Gimbal_Imu_Update(gimbal_t* gimbal)
 	gimbal->info->pitch_angle_imu_measure = itm(imu.base_info->pitch);
 }
 
+int yes = 1;
 /*Part 2*/
 void Gimbal_Ctrl(void)
 {
 	Gimbal.imu_update(&Gimbal);
 	
-	Gimbal.info->yaw_angle_target = 7940;
+	if(yes == 1)
+	{
+		Gimbal.info->yaw_angle_target = 7940;
+	}
+	else if(yes == -1)
+	{
+		Gimbal.info->yaw_angle_target = 6500;
+	}
 	
-  Gimbal.pitch_mec_ctrl(&Gimbal);
+//	if(abs(Gimbal.yaw_gimbal->pid.angle.info.err) <= 1)
+//	{
+//		yes = -yes;
+//	}
+	
+  Gimbal.yaw_mec_ctrl(&Gimbal);
 	
 }
 
@@ -105,7 +129,7 @@ void Gimbal_Yaw_Mec_Ctrl(gimbal_t* gim)
 	motor_t *motor = gim->yaw_gimbal;
 	
 	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
-	                                                        info->angle,gim->info->yaw_angle_imu_measure,
+	                                                        info->angle,gim->info->yaw_speed_imu_measure,
 	                                                        gim->info->yaw_angle_target,1);
 	
 	Gimbal_Send(motor,can1_gimbal_send_buff);

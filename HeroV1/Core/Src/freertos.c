@@ -108,7 +108,7 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of Control_Task */
-  osThreadDef(Control_Task, control_task, osPriorityAboveNormal, 0, 128);
+  osThreadDef(Control_Task, control_task, osPriorityNormal, 0, 1024);
   Control_TaskHandle = osThreadCreate(osThread(Control_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

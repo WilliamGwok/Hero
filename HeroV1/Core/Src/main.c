@@ -26,6 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "bmi2_defs.h"
+#include "bmi.h"
 #include "drv_all.h"
 /* USER CODE END Includes */
 
@@ -89,6 +91,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+	HAL_Delay(500);
+	while(BMI_Init()!=BMI2_OK){}
   MX_CAN1_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
