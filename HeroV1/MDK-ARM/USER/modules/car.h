@@ -3,26 +3,36 @@
 
 #include "stm32f4xx_hal.h"
 #include "remote.h"
+#include "stdbool.h"
 
 typedef enum 
 {
 	sleep_car,
 	mec_car,
 	imu_car,
-}car_move_mode_t;
+}car_move_mode_e;
 
 typedef enum
 {
 	RC_CTRL,
 	KEY_CTRL,
-}car_ctrl_mode_t;
+}car_ctrl_mode_e;
 
 typedef struct
 {
-	uint8_t move_command;
-	uint8_t ctrl_command;
+	uint8_t car_move_command;
+	
 	uint8_t car_move_status;
+	
+	uint8_t ctrl_mode;
+	
 }car_t;
+
+extern bool top_car_on;
+extern bool top_car_of;
+extern bool car_mode_change;
+
+extern car_t Car;
 
 void Rc_S2_Status_Check(car_t* car);
 void Rc_S1_Status_Check(void);
@@ -32,6 +42,8 @@ void Rc_Status_Scan(car_t* car);
 void Key_Status_Scan(car_t* car);
 void car_ctrl_mode_update(car_t* car);
 void car_status_update(car_t* car);
+void car_init(car_t* car);
+void car_ctrl(car_t* car);
 
 #endif
 

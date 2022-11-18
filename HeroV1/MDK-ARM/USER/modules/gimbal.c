@@ -1,11 +1,15 @@
 #include "gimbal.h"
 #include "gimbal_motor.h"
+#include "config_gimbal.h"
 #include "drv_can.h"
 #include "mathematics.h"
+#include "car.h"
 
 extern motor_t Gim_Yaw;
 extern motor_t Gim_Pitch;
 
+ave_filter_t mec_yaw_angle_fil;
+ave_filter_t mec_pitch_angle_fil;
 /*
 	float	  kp;
 	float 	ki;
@@ -34,9 +38,9 @@ float gimb_y_mec_angle_in_pid_param[7]   = {-430,-5,0,0,4000,4000,28000};
 
 float gimb_y_mec_angle_pid_param[7]      = {-0.7,0,0,0,0,0,700};
 
-float gimb_p_mec_angle_in_pid_param[7]   = {0,0,0,0,5000,5000,28000};
+float gimb_p_mec_angle_in_pid_param[7]   = {-500,-5,0,0,5000,5000,28000};
 
-float gimb_p_mec_angle_pid_param[7]      = {0,0,0,0,0,0,500};
+float gimb_p_mec_angle_pid_param[7]      = {-1,0,0,0,0,0,500};
 
 float gimb_y_imu_angle_in_pid_param[7]   = {0,0,0,0,4000,4000,28000};
 
@@ -66,6 +70,9 @@ void Gimbal_Init_All(void)
 	
 	Gimbal.yaw_gimbal   = &Gim_Yaw;
 	Gimbal.pitch_gimbal = &Gim_Pitch;
+	
+	Gimbal_Info_Init(&Gimbal);
+	Gimbal_Command_Init(&Gimbal);
 }
 
 void Gimbal_Heartbeat(void)
@@ -92,24 +99,186 @@ void Gimbal_Imu_Update(gimbal_t* gimbal)
 	
 	gimbal->info->pitch_speed_imu_measure = imu.base_info->pitch_dif_speed_ave;
 	
-	gimbal->info->yaw_angle_imu_measure = itm(imu.base_info->yaw);
+	gimbal->info->yaw_angle_imu_measure = itm(imu.base_info->yaw);//出问题
 	
-	gimbal->info->pitch_angle_imu_measure = itm(imu.base_info->pitch);
+	gimbal->info->pitch_angle_imu_measure = itm(imu.base_info->pitch);//出问题
+	
+	gimbal->info->yaw_angle_mec_measure = ave_fil_update(&mec_yaw_angle_fil,gimbal->yaw_gimbal->rx_info.angle,10);
+	
+	gimbal->info->pitch_angle_mec_measure = ave_fil_update(&mec_pitch_angle_fil,gimbal->pitch_gimbal->rx_info.angle,10);
 }
 
-int yes = 1;
-/*Part 2*/
-void Gimbal_Ctrl(void)
+void Gimbal_Info_Init(gimbal_t* gimbal)
 {
-	Gimbal.imu_update(&Gimbal);
+	gimbal->info->yaw_mode = G_Y_sleep;
+	gimbal->info->pitch_mode = G_P_sleep;
+}
+
+void Gimbal_Command_Init(gimbal_t* gimbal)
+{
 	
+}
+
+
+void Gimbal_Mode_Update(gimbal_t* gimbal)
+{
+	if(car_mode_change == true)
+	{
+		switch(Car.car_move_status)
+		{
+			case sleep_car:
+				gimbal->info->yaw_mode = G_Y_sleep;
+			  gimbal->info->pitch_mode = G_P_sleep;
+				break;
+			case mec_car:
+				gimbal->info->yaw_mode = G_Y_mec;
+			  gimbal->info->pitch_mode = G_P_mec;
+			  break;
+			case imu_car:
+				gimbal->info->yaw_mode = G_Y_imu;
+			  gimbal->info->pitch_mode = G_P_imu;
+			default:
+				break;
+		}
+	}
+}
+
+void Gimbal_Command_React(gimbal_t* gimbal)
+{
+	
+}
+
+void Gimbal_Work(gimbal_t* gimbal)
+{
+	switch(gimbal->info->yaw_mode)
+	{
+		case G_Y_sleep:
+			break;
+		case G_Y_init:
+			break;
+		case G_Y_imu:
+			switch(Car.ctrl_mode)
+			{
+				case RC_CTRL:
+					gimbal->info->yaw_angle_target += rc.base_info->ch0 / 2000.f;
+				  Gimbal_Yaw_Angle_Check(gimbal);
+					gimbal->pitch_imu_ctrl(gimbal);
+				  break;
+				case KEY_CTRL:
+			    break;
+				default:
+					break;
+			}
+			break;
+		case G_Y_mec:
+			  gimbal->yaw_mec_ctrl(gimbal);
+			break;
+	}
+	
+	switch(gimbal->info->pitch_mode)
+	{
+		case G_P_sleep:
+			break;
+		case G_P_init:
+			break;
+		case G_P_imu:
+			switch(Car.ctrl_mode)
+			{
+				case RC_CTRL:
+					gimbal->info->pitch_angle_target += rc.base_info->ch1 / 2000.f;
+				  Gimbal_Pitch_Angle_Check(gimbal);
+					gimbal->pitch_imu_ctrl(gimbal);
+				  break;
+				case KEY_CTRL:
+			    break;
+				default:
+					break;
+			}
+			break;
+		case G_P_mec:
+			  switch(Car.ctrl_mode)
+			{
+				case RC_CTRL:
+					gimbal->info->pitch_angle_target += rc.base_info->ch1 / 2000.f;
+				  Gimbal_Pitch_Angle_Check(gimbal);
+					gimbal->pitch_mec_ctrl(gimbal);
+				  break;
+				case KEY_CTRL:
+			    break;
+				default:
+					break;
+			}
+			break;
+	}
+}
+
+
+
+
+//void Gimbal_Ctrl(gimbal_t* gimbal)
+//{
+//	Gimbal_Mode_Update(gimbal);
+//	
+//	Gimbal_Command_React(gimbal);
+//	
+//	Gimbal_Work(gimbal);
+//	
+//	Gimbal_Command_Init(gimbal);
+//}
+
+
+
+
+void Gimbal_Pitch_Angle_Check(gimbal_t* gimbal)
+{
+	float angle = 0.0f;
+	
+	gimbal_info_t* info = gimbal->info;
+	
+	angle = info->pitch_angle_target;
+	if(angle > 900)
+	{
+		angle = 900;
+	}
+	if(angle < -550)
+	{
+		angle = -550;
+	}
+	info->pitch_angle_target = angle;
+}
+
+void Gimbal_Yaw_Angle_Check(gimbal_t* gimbal)
+{
+	float angle = 0.0f;
+	
+	gimbal_info_t* info = gimbal->info;
+	
+	angle = info->yaw_angle_target;
+	if(angle > 8191)
+	{
+		angle -= 8191;
+	}
+	if(angle < 0)
+	{
+		angle += 8191;
+	}
+	info->yaw_angle_target = angle;
+}
+
+
+
+
+/*Part 2*/
+int yes = 1;
+void Gimbal_Ctrl(gimbal_t* gimbal)
+{
 	if(yes == 1)
 	{
-		Gimbal.info->yaw_angle_target = 7940;
+		Gimbal.info->pitch_angle_target = gim_pitch_middle_angle;
 	}
 	else if(yes == -1)
 	{
-		Gimbal.info->yaw_angle_target = 6500;
+		Gimbal.info->pitch_angle_target = gim_pitch_middle_angle;
 	}
 	
 //	if(abs(Gimbal.yaw_gimbal->pid.angle.info.err) <= 1)
@@ -117,7 +286,7 @@ void Gimbal_Ctrl(void)
 //		yes = -yes;
 //	}
 	
-  Gimbal.yaw_mec_ctrl(&Gimbal);
+  Gimbal.pitch_mec_ctrl(&Gimbal);
 	
 }
 
@@ -129,8 +298,8 @@ void Gimbal_Yaw_Mec_Ctrl(gimbal_t* gim)
 	motor_t *motor = gim->yaw_gimbal;
 	
 	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
-	                                                        info->angle,gim->info->yaw_speed_imu_measure,
-	                                                        gim->info->yaw_angle_target,1);
+	                                                        gim->info->yaw_angle_mec_measure,gim->info->yaw_speed_imu_measure,
+	                                                        gim_yaw_middle_angle,1);
 	
 	Gimbal_Send(motor,can1_gimbal_send_buff);
 }
@@ -142,8 +311,8 @@ void Gimbal_Pitch_Mec_Ctrl(gimbal_t* gim)
 	motor_t *motor = gim->pitch_gimbal;
 	
 	can2_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
-	                                                        info->angle,gim->info->pitch_speed_imu_measure,
-	                                                        gim->info->yaw_angle_target,1);
+	                                                        gim->info->pitch_angle_mec_measure,gim->info->pitch_speed_imu_measure,
+	                                                        gim->info->pitch_angle_target,1);
 	
 	Gimbal_Send(motor,can2_gimbal_send_buff);
 }

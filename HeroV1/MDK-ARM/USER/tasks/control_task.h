@@ -5,6 +5,8 @@
 #include "config_status.h"
 #include "cmsis_os.h"
 #include "imu.h"
+#include "gimbal.h"
+#include "car.h"
 
 #endif
 

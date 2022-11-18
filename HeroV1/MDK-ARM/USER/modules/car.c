@@ -6,13 +6,15 @@ bool top_car_on = false;
 bool top_car_off = false;
 bool car_mode_change = false;
 
+car_t Car;
+
 void car_init(car_t* car)
 {
-	car->move_command = sleep_car;
+	car->car_move_command = sleep_car;
 	
 	car->car_move_status = sleep_car;
 	
-	car->ctrl_command = RC_CTRL;
+	car->ctrl_mode = RC_CTRL;
 	
 	car_command_init();
 }
@@ -35,7 +37,7 @@ void car_ctrl_mode_update(car_t* car)
 {
 	Rc_S2_Status_Check(car);
 	
-	switch(car->ctrl_command)
+	switch(car->ctrl_mode)
 	{
 		case KEY_CTRL:
 			Key_Status_Scan(car);
@@ -56,9 +58,9 @@ void car_status_update(car_t* car)
 	}
 	else
 	{
-		if(car->car_move_status != car->move_command)
+		if(car->car_move_status != car->car_move_command)
 		{
-			car->car_move_status = car->move_command;
+			car->car_move_status = car->car_move_command;
 			
 			car_mode_change = true;
 		}
@@ -74,16 +76,16 @@ void Rc_S2_Status_Check(car_t* car)
 	switch(rc.base_info->s2.status)
 	{
 		case up_R:
-			car->ctrl_command = KEY_CTRL;
-		  car->move_command = imu_car;
+			car->ctrl_mode = KEY_CTRL;
+		  car->car_move_command = imu_car;
 			break;
 		case mid_R:
-			car->ctrl_command =RC_CTRL;
-		  car->move_command = mec_car;
+			car->ctrl_mode =RC_CTRL;
+		  car->car_move_command = mec_car;
 			break;
 		case down_R:
-			car->ctrl_command =RC_CTRL;
-		  car->move_command = imu_car;
+			car->ctrl_mode =RC_CTRL;
+		  car->car_move_command = imu_car;
 			break;
 		default:
 			break;
@@ -121,7 +123,7 @@ void Rc_Thumbwheel_Check(car_t* car)
 	switch(rc.base_info->thumbwheel.status)
 	{
 		case up_R:
-			switch(car->move_command)
+			switch(car->car_move_command)
 			{
 				case mec_car:
 					break;
@@ -133,7 +135,7 @@ void Rc_Thumbwheel_Check(car_t* car)
 		case mid_R:
 			break;
 		case down_R:
-			switch(car->move_command)
+			switch(car->car_move_command)
 			{
 				case mec_car:
 					break;
