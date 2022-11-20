@@ -67,7 +67,7 @@ void Gimbal_Yaw_Mec_Ctrl(gimbal_t* gimbal);
 void Gimbal_Pitch_Mec_Ctrl(gimbal_t* gimbal);
 void Gimbal_Yaw_Imu_Ctrl(gimbal_t* gimbal);
 void Gimbal_Pitch_Imu_Ctrl(gimbal_t* gimbal);
-void Gimbal_Info_Init(gimbal_t* gimbal);
+void Gimbal_Mode_Init(gimbal_t* gimbal);
 void Gimbal_Command_Init(gimbal_t* gimbal);
 void Gimbal_Pitch_Angle_Check(gimbal_t* gimbal);
 void Gimbal_Yaw_Angle_Check(gimbal_t* gimbal);

@@ -68,6 +68,7 @@ void imu_info_init(imu_info_t *info)
   * @param  
   * @retval 
   */
+float aaz, aax, aay, aaz_K, aax_K, aay_K;
 void imu_update(imu_t *imu)
 {
 	imu_base_info_t *base_info = imu->base_info;
@@ -95,6 +96,13 @@ void imu_update(imu_t *imu)
 	base_info->aay_K = lowpass(base_info->aay_K, base_info->aay, 1);//imu->config->acce_lowpass);
 	base_info->aaz_K = lowpass(base_info->aaz_K, base_info->aaz, 1);//imu->config->acce_lowpass);
 
+	aax = base_info->aax;
+	aay = base_info->aay;
+	aaz = base_info->aaz;
+	aax_K = base_info->aax_K;
+	aay_K = base_info->aay_K;
+	aaz_K = base_info->aaz_K;
+	
 	/* ½âËãÍÓÂÝÒÇÊý¾Ý */
 	BMI_Get_EulerAngle(&base_info->pitch,  &base_info->roll,  &base_info->yaw,\
 	                   &base_info->pitch_, &base_info->roll_, &base_info->yaw_,\

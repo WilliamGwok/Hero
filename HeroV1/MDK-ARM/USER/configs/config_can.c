@@ -25,6 +25,7 @@ void CAN1_rxDataHandler(uint32_t canId, uint8_t *rxBuf)
 		  break;
 		case gimbal_motor_yaw_id:
 			Gim_Yaw.rx(&Gim_Yaw,rxBuf,8);
+		  break;
 	}
 }
 
@@ -43,6 +44,7 @@ void CAN2_rxDataHandler(uint32_t canId, uint8_t *rxBuf)
 		  break;
 		case gimbal_motor_pitch_id:
 			Gim_Pitch.rx(&Gim_Pitch,rxBuf,8);
+		  break;
 	}
 }
 

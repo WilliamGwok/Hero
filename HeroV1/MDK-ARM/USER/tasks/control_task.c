@@ -21,7 +21,7 @@ void control_task(void const * argument)
 		{
       Gimbal_Ctrl(&Gimbal);
 			
-			Chassis_Ctrl();
+			Chassis_Ctrl(&Chassis_Mode);
 		}
 		else
 		{

@@ -4,7 +4,12 @@
 
 bool top_car_on = false;
 bool top_car_off = false;
+
 bool car_mode_change = false;
+bool car_init_ok = false;
+
+extern bool gimbal_init_ok;
+extern bool imu_init_Y_O_N;
 
 car_t Car;
 
@@ -23,7 +28,6 @@ void car_command_init(void)
 {
 	top_car_on = false;
   top_car_off = false;
-	car_mode_change = false;
 }
 
 void car_ctrl(car_t* car)
@@ -50,11 +54,30 @@ void car_ctrl_mode_update(car_t* car)
 	}
 }
 
+void car_init_judge(car_t* car)
+{
+	if(gimbal_init_ok == true && imu_init_Y_O_N == true)
+	{
+		car_init_ok = true;
+	}
+}
+
 void car_status_update(car_t* car)
 {
+	car_init_judge(car);
+	
 	if(rc.info->status == DEV_OFFLINE)
 	{
 		car->car_move_status = sleep_car;
+		car_mode_change = true;
+		car_init_ok = false;
+		car_command_init();
+	}
+	else if(car_init_ok == false)
+	{
+	  car->car_move_status = init_car;
+		car_mode_change = true;
+		car_command_init();
 	}
 	else
 	{

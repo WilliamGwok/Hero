@@ -8,6 +8,7 @@
 typedef enum 
 {
 	sleep_car,
+	init_car,
 	mec_car,
 	imu_car,
 }car_move_mode_e;
@@ -29,7 +30,7 @@ typedef struct
 }car_t;
 
 extern bool top_car_on;
-extern bool top_car_of;
+extern bool top_car_off;
 extern bool car_mode_change;
 
 extern car_t Car;

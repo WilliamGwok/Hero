@@ -1509,6 +1509,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\modules\gimbal.c</FilePath>
             </File>
+            <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\modules\car.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
