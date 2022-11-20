@@ -22,6 +22,7 @@ float friction_left_motor_speed_pid_param[7]  = {0,0,0,0,0,6000,10000};
 
 float friction_right_motor_speed_pid_param[7] = {0,0,0,0,0,6000,10000};
 
+Shoot_t shoot;
 
 int16_t can1_shoot_send_buff[4];
 int16_t can2_shoot_send_buff[4];
@@ -37,8 +38,12 @@ void Shooting_Init_All(void)
 	feed_motor.pid_init(&feed_motor.pid.angle,feed_motor_angle_pid_param);
 	friction_left_motor.pid_init(&friction_left_motor.pid.speed,friction_left_motor_speed_pid_param);
 	friction_right_motor.pid_init(&friction_right_motor.pid.speed,friction_right_motor_speed_pid_param);
+	
+	shoot.feed_shoot = &feed_motor;
+	shoot.position_shoot = &position_motor;
+	shoot.left_friction_shoot = &friction_left_motor;
+	shoot.right_friction_shoot = &friction_right_motor;
 }
-
 
 void Shooting_Heartbeat(void)
 {
@@ -46,5 +51,23 @@ void Shooting_Heartbeat(void)
 	position_motor.heartbeat(&position_motor);
 	friction_left_motor.heartbeat(&friction_left_motor);
 	friction_right_motor.heartbeat(&friction_right_motor);
+}
+
+//void Gimbal_Yaw_Imu_Ctrl(gimbal_t* gimbal)
+//{
+//	gimbal_info_t*  info = gimbal->info;
+//	
+//	motor_t *motor = gimbal->yaw_gimbal;
+//	
+//	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
+//	                                                        info->yaw_angle_imu_measure,info->yaw_speed_imu_measure,
+//	                                                        gimbal->info->yaw_angle_target,1);
+//	
+//	Gimbal_Send(motor,can1_gimbal_send_buff);
+//}
+
+void Feed_Work(Shoot_t* shoot)
+{
+	
 }
 
