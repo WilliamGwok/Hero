@@ -788,6 +788,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\configs\config_gimbal.c</FilePath>
             </File>
+            <File>
+              <FileName>config_chassis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_chassis.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

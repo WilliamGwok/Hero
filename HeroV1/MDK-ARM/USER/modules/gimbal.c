@@ -180,7 +180,7 @@ void Gimbal_Work(gimbal_t* gimbal)
 			switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
-					gimbal->info->yaw_angle_target += rc.base_info->ch0 / 200.f;
+					gimbal->info->yaw_angle_target += rc.base_info->ch0 / 100.f;
 				  Gimbal_Yaw_Angle_Check(gimbal);
 					gimbal->yaw_imu_ctrl(gimbal);
 				  break;

@@ -101,7 +101,7 @@ typedef struct
 	int16_t		angle_prev;	
 	int16_t		angle_offset;			//       //偏执 自定义角度范围
 	int32_t		angle_sum;				//-2147683647~2147683647 上电开始到现在的角度和
-
+	
 }motor_rx_info_t;
 
 typedef struct 
@@ -110,6 +110,14 @@ typedef struct
 	motor_dir_t dir;	    //方向
 	
 }motor_mec_info_t;//机械信息
+
+typedef struct
+{
+	float			motor_out;
+//	float			motor_err_in;
+//	float			motor_err_out;
+	uint8_t   lock_cnt;
+}motor_base_info_t;
 
 typedef struct
 {

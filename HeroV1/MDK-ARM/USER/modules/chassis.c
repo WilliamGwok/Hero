@@ -8,6 +8,7 @@
 #include "math.h"
 #include "mathematics.h"
 #include "car.h"
+#include "config_chassis.h"
 
 extern chassis_t Chassis;
 
@@ -168,19 +169,25 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 			Chassis.base_info.target.cycle_speed = rc.base_info->ch0 * buff;
 		  break;
 		case C_S_follow:
-      if(abs(err_yaw) >= 200)
+			if(abs(err_yaw) > 2048)
 			{
-				Chassis.base_info.target.cycle_speed = 6.f * err_yaw + sgn(err_yaw) * 200;
+				err_yaw -= sgn(err_yaw) * 4096;
+			}
+		
+      if(abs(err_yaw) >= 100)
+			{
+				Chassis.base_info.target.cycle_speed = 6.f * err_yaw + sgn(err_yaw) * 100;
 			}
 			else
 			{
-				Chassis.base_info.target.cycle_speed = 2.5f * err_yaw;//这里要画图，不然会目标值跳变，会卡
+				Chassis.base_info.target.cycle_speed = 3.0f * err_yaw;//这里要画图，不然会目标值跳变，会卡
 			}
 		  
 		  
 //			Chassis.base_info.target.cycle_speed = 0;//需要一个pid,需要吗？
 		  break;
 		case C_S_top:
+			  Chassis.base_info.target.cycle_speed = chassis_top_speed_level_1;
 			break;
 		default:
 			break;
@@ -189,29 +196,5 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 	Chassis.work(&Chassis);
 }
 
-
-
-
-
-
-
-
-
-
-//void Chassis_Process(Chassis_Mode_t* chassis_mode)
-//{
-//	char buff = 0;
-//	
-//	if(1)    //判断依据待定
-//	{
-//		buff = CHAS_MID_BUFF;
-//	}
-//	
-//	Chassis.base_info.target.front_speed = rc.base_info->ch3 * buff;
-//	Chassis.base_info.target.right_speed = rc.base_info->ch2 * buff;
-//	Chassis.base_info.target.cycle_speed = rc.base_info->ch0 * buff;
-//	
-//	Chassis.work(&Chassis);
-//}
 
 

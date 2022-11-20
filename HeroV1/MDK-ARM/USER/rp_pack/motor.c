@@ -13,6 +13,7 @@
 
 
 
+
 /**
  *	@brief	电机发送信息
  */
@@ -185,21 +186,26 @@ void motor_class_heartbeat(struct motor_class_t *motor)
 /**
 *	@brief	堵转判断：仅是必要条件，并不是一定堵住 torque_limit:扭矩阈值 return:1为是 0为否
  */
-uint8_t motor_class_stucking_flag(struct motor_class_t *motor,uint16_t torque_limit)
+uint8_t motor_class_stucking_flag(struct motor_class_t *motor, float output_limit)
 {
 	uint8_t res = 0;
 	
+	
 	if(motor->state.init_flag == M_DEINIT || motor->state.work_state == M_OFFLINE)return 0;	
 	
-	if(m_abs(motor->rx_info.torque) > torque_limit && m_abs(motor->rx_info.speed) < 50){
-	
-		res = 1;
-	
+	if(m_abs(motor->base_info.motor_out) > output_limit && m_abs(motor->rx_info.speed) < 5)
+	{
+		motor->base_info.lock_cnt++;
+		
+		if (motor->base_info.lock_cnt == 100)
+			res = 1;
+		else
+			res = 0;
 	}
-	else{
-	
+	else
+	{
 		res = 0;
-	
+		motor->base_info.lock_cnt = 0;
 	}
 	
 	return res;
@@ -373,7 +379,7 @@ float motor_pid_ctrl(motor_pid_t *out, motor_pid_t *inn, float meas1, float meas
 	}
 	else 
 	{
-		/*--内环计算--*/
+		/*--外环计算--*/
 		motor_pid_err(out , meas1);	
 		switch(err_cal_mode)
 		{
@@ -393,7 +399,7 @@ float motor_pid_ctrl(motor_pid_t *out, motor_pid_t *inn, float meas1, float meas
 		
 		inn->info.target = out->info.out;	//目标值转移到速度环
 		
-		/*--外环计算--*/
+		/*--内环计算--*/
 		motor_pid_err(inn , meas2);  
 		motor_pid_cal(inn);	
 		
@@ -447,7 +453,10 @@ float motor_pid_position(struct motor_class_t *motor,float target)
 	
 	motor->pid.position.info.target = target;
 	
-	return motor_pid_ctrl(&motor->pid.position,&motor->pid.position_in,motor->rx_info.angle_sum,motor->rx_info.speed,0);
+	
+	motor->base_info.motor_out = motor_pid_ctrl(&motor->pid.position,&motor->pid.position_in,motor->rx_info.angle_sum,motor->rx_info.speed,0);
+	
+	return motor->base_info.motor_out;
 	
 }
 
@@ -470,7 +479,9 @@ float motor_pid_angle(struct motor_class_t *motor,float target)
 	
 	motor->pid.angle.info.target = target;
 	
-	return motor_pid_ctrl(&motor->pid.angle,&motor->pid.angle_in,motor->rx_info.angle,motor->rx_info.speed,1);
+	motor->base_info.motor_out = motor_pid_ctrl(&motor->pid.angle,&motor->pid.angle_in,motor->rx_info.angle,motor->rx_info.speed,1);
+	
+	return motor->base_info.motor_out;
 	
 }
 
@@ -493,7 +504,9 @@ float motor_pid_speed(struct motor_class_t *motor,float target)
 	
 	motor->pid.speed.info.target = target;
 	
-	return motor_pid_ctrl(&motor->pid.speed,NULL,motor->rx_info.speed,NULL,0);
+	motor->base_info.motor_out = motor_pid_ctrl(&motor->pid.speed,NULL,motor->rx_info.speed,NULL,0);  
+	
+	return motor->base_info.motor_out;
 	
 }
 
@@ -614,7 +627,10 @@ void get_rm_info(struct motor_class_t *motor, uint8_t *rxBuf)
 	motor_info->torque  = CAN_GetMotorTorque(rxBuf);	
 	motor_info->temperature = CAN_GetMotorTemperature(rxBuf);
 
-	err = motor_info->angle - motor_info->angle_prev;
+	if(!motor_info->angle_prev && !motor_info->angle_sum)
+		err = 0;
+	else
+		err = motor_info->angle - motor_info->angle_prev;
 	
 	/* 过零点 */
 	if(m_abs(err) > 4095)
@@ -750,8 +766,4 @@ void get_kt_9025_info(struct motor_class_t *motor, uint8_t *rxBuf)
 	
 	motor->state.offline_cnt = 0;
 }
-
-
-
-
 

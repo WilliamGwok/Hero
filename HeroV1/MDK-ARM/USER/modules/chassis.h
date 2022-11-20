@@ -31,6 +31,15 @@ typedef struct
 	uint8_t chassis_spin_mode;
 }Chassis_Mode_t;
 
+typedef struct
+{
+	uint16_t top_speed_level_0;
+	
+	uint16_t top_speed_level_1;
+	
+	uint16_t top_speed_level_2;
+}Chassis_Config_Info_t;
+
 extern Chassis_Mode_t Chassis_Mode;
 
 void Chassis_Init_All(void);

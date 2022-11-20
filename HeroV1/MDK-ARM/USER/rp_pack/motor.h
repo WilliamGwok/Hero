@@ -18,6 +18,7 @@ typedef struct motor_class_t
 	motor_id_info_t        id;
   motor_mec_info_t       mec_info;
 	motor_pid_all_t        pid;
+	motor_base_info_t			 base_info;
 	
 	motor_9025_info_t      *kt9025_info;
 	
@@ -38,7 +39,7 @@ typedef struct motor_class_t
 	void  (*c_judge_dir)(struct motor_class_t *motor,uint16_t range);	
   void  (*c_offset)(struct motor_class_t *motor, uint16_t range);	
 	
-  uint8_t (*c_stuck_flag)(struct motor_class_t *motor,uint16_t torque_limit);	
+  uint8_t (*c_stuck_flag)(struct motor_class_t *motor, float output_limit);	
 	
 }motor_t;
 
@@ -48,7 +49,7 @@ typedef struct motor_class_t
 void motor_class_init(struct motor_class_t *motor);
 void motor_class_heartbeat(struct motor_class_t *motor);
 void motor_class_pid_init(motor_pid_t *pid, float *buff);
-uint8_t motor_class_stucking_flag(struct motor_class_t *motor,uint16_t torque_limit);
+uint8_t motor_class_stucking_flag(struct motor_class_t *motor, float output_limit);
 
 void get_rm_can_drvie(struct motor_class_t *motor);
 void get_rm_info(struct motor_class_t *motor, uint8_t *rxBuf);
@@ -71,7 +72,7 @@ float motor_pid_speed(struct motor_class_t *motor,float target);
 float motor_pid_double(motor_pid_t *out, motor_pid_t *inn, float meas1, float meas2, float tar, char err_cal_mode);
 float motor_pid_single(motor_pid_t *out, float meas1, float tar);
 
-
+void CAN1_Motor_RxCallback(uint32_t canId, uint8_t *rxBuf);
 
 #endif
 
