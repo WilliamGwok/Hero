@@ -88,11 +88,11 @@ void Gimbal_Send(motor_t* motor,int16_t *buff)
 {
   if(motor->id.drive_type == M_CAN1)
 	{
-		CAN1_Send_With_int16_to_uint8(motor->id.tx_id,can1_gimbal_send_buff);
+		CAN1_Send_With_int16_to_uint8(motor->id.tx_id,buff);
 	}
 	if(motor->id.drive_type == M_CAN2)
 	{
-		CAN2_Send_With_int16_to_uint8(motor->id.tx_id,can2_gimbal_send_buff);
+		CAN2_Send_With_int16_to_uint8(motor->id.tx_id,buff);
 	}
 }
 

@@ -19,6 +19,8 @@ void control_task(void const * argument)
 
 		if(rc.info->status == DEV_ONLINE)
 		{
+			Shooting_Test();
+			
       Gimbal_Ctrl(&Gimbal);
 			
 			Chassis_Ctrl(&Chassis_Mode);

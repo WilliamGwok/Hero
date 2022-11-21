@@ -5,6 +5,9 @@
 bool top_car_on = false;
 bool top_car_off = false;
 
+bool shoot_start = false;
+bool shoot_stop = false;
+
 bool car_mode_change = false;
 bool car_init_ok = false;
 
@@ -28,6 +31,8 @@ void car_command_init(void)
 {
 	top_car_on = false;
   top_car_off = false;
+	shoot_start = false;
+  shoot_stop = false;
 }
 
 void car_ctrl(car_t* car)
@@ -127,13 +132,13 @@ void Rc_S1_Status_Check(void)
 	switch(rc.base_info->s1.status)
 	{
 		case up_R:
-
+      shoot_start = true;
 			break;
 		case mid_R:
 
 			break;
 		case down_R:
-
+      shoot_stop = true;
 			break;
 		default:
 			

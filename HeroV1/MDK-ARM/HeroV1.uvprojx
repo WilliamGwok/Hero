@@ -793,6 +793,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\configs\config_chassis.c</FilePath>
             </File>
+            <File>
+              <FileName>config_shooting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\configs\config_shooting.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
