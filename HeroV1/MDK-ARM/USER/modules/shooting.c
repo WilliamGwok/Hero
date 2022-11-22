@@ -32,7 +32,16 @@ Shoot_config_t shoot_config =
 	.position_work_speed = position_work_speed_init,
 };
 
-Shoot_info_t Shoot_Info;
+Feed_work_info_t work_info_feed;
+shoot_work_info_t work_info_shoot = 
+{
+  .feed_work_info = &work_info_feed,
+};
+
+Shoot_info_t Shoot_Info = 
+{
+	.shoot_work_info = &work_info_shoot,
+};
 
 Shoot_t Shoot = 
 {
@@ -55,8 +64,8 @@ void Shooting_Init_All(void)
 	friction_left_motor.init(&friction_left_motor);
 	friction_right_motor.init(&friction_right_motor);
 	
-	feed_motor.pid_init(&feed_motor.pid.speed,feed_motor_position_in_pid_param);
-	feed_motor.pid_init(&feed_motor.pid.angle,feed_motor_position_pid_param);
+	feed_motor.pid_init(&feed_motor.pid.position_in,feed_motor_position_in_pid_param);
+	feed_motor.pid_init(&feed_motor.pid.position,feed_motor_position_pid_param);
 	friction_left_motor.pid_init(&friction_left_motor.pid.speed,friction_left_motor_speed_pid_param);
 	friction_right_motor.pid_init(&friction_right_motor.pid.speed,friction_right_motor_speed_pid_param);
 	
@@ -74,18 +83,105 @@ void Shooting_Heartbeat(void)
 	friction_right_motor.heartbeat(&friction_right_motor);
 }
 
-//void Gimbal_Yaw_Imu_Ctrl(gimbal_t* gimbal)
-//{
-//	gimbal_info_t*  info = gimbal->info;
-//	
-//	motor_t *motor = gimbal->yaw_gimbal;
-//	
-//	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
-//	                                                        info->yaw_angle_imu_measure,info->yaw_speed_imu_measure,
-//	                                                        gimbal->info->yaw_angle_target,1);
-//	
-//	Gimbal_Send(motor,can1_gimbal_send_buff);
-//}
+void Shoot_Commmand_React(Shoot_t* shoot)
+{
+	shoot_work_info_t* work_info = shoot->info->shoot_work_info;
+	
+	if(shoot_start == true)
+	{
+		work_info->shoot_work_command = S_Shoot;
+	}
+	if(shoot_stop == true)
+	{
+		work_info->shoot_work_command = S_Stop;
+	}
+	if(shoot_standby == true)
+	{
+		work_info->shoot_work_command = S_Standby;
+	}
+	if(shoot_wake == true)
+	{
+		work_info->shoot_work_command = S_Wake;
+	}
+	if(feed_reload == true)
+	{
+		work_info->feed_work_info->feed_work_command = F_reload;
+	}
+	if(feed_unload == true)
+	{
+		work_info->feed_work_info->feed_work_command = F_unload;
+	}
+}
+
+void Shoot_Command_Init(Shoot_t* shoot)
+{
+  shoot_start = false;
+  shoot_stop = false;
+  shoot_standby = false;
+  shoot_wake = false;
+  feed_reload = false;
+  feed_unload = false;
+}
+
+
+
+void Shooting_Ctrl(Shoot_t* shoot)
+{
+	
+	Shoot_Commmand_React(shoot);
+	
+	
+	
+	Shoot_Command_Init(shoot);
+}
+
+void Shoot_Work(Shoot_t*shoot)
+{
+	
+}
+
+void Feed_Work(Shoot_t* shoot)
+{
+	
+}
+
+void Shooting_Test(void)
+{
+	Shoot.info->fric_speed_target = friction_work_speed_init;
+	Shoot.info->feed_angle_target = feed_reload_work_angle;
+	Shoot.info->feed_angle_target = feed_reload_work_angle;
+	
+	
+	if(Shoot.feed_shoot->pid.position.info.err <= 1)
+	{
+		Shoot.feed_shoot->rx_info.angle_sum = 0;
+	}
+//	Shoot.l_fric_ctrl(&Shoot);
+//	Shoot.r_fric_ctrl(&Shoot);
+//	Shoot.feed_ctrl(&Shoot);
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Shooting_Send(motor_t* motor,int16_t *buff)
 {
@@ -98,40 +194,6 @@ void Shooting_Send(motor_t* motor,int16_t *buff)
 		CAN2_Send_With_int16_to_uint8(motor->id.tx_id,buff);
 	}
 }
-
-void Shoot_Commmand_React(Shoot_t* shoot)
-{
-	
-}
-
-
-
-void Shooting_Ctrl(Shoot_t* shoot)
-{
-	
-}
-
-
-uint16_t abcdefg = friction_work_speed_init;
-
-void Shooting_Test(void)
-{
-	Shoot.info->fric_speed_target = friction_work_speed_init;
-	Shoot.info->feed_angle_target = feed_reload_work_angle;
-	
-//	Shoot.l_fric_ctrl(&Shoot);
-//	Shoot.r_fric_ctrl(&Shoot);
-}
-
-
-
-
-
-
-
-
-
-
 
 void Feed_Ctrl(Shoot_t* shoot)
 {

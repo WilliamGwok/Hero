@@ -7,6 +7,10 @@ bool top_car_off = false;
 
 bool shoot_start = false;
 bool shoot_stop = false;
+bool shoot_standby = false;
+bool shoot_wake = false;
+bool feed_reload = false;
+bool feed_unload = false;
 
 bool car_mode_change = false;
 bool car_init_ok = false;
@@ -33,6 +37,10 @@ void car_command_init(void)
   top_car_off = false;
 	shoot_start = false;
   shoot_stop = false;
+	shoot_standby = false;
+  shoot_wake = false;
+  feed_reload = false;
+  feed_unload = false;
 }
 
 void car_ctrl(car_t* car)
@@ -135,7 +143,7 @@ void Rc_S1_Status_Check(void)
       shoot_start = true;
 			break;
 		case mid_R:
-
+      shoot_standby = true;
 			break;
 		case down_R:
       shoot_stop = true;

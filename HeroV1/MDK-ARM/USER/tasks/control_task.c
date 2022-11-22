@@ -17,9 +17,10 @@ void control_task(void const * argument)
 		
 		Cal_Pulse();
 
+		Shooting_Test();
 		if(rc.info->status == DEV_ONLINE)
 		{
-			Shooting_Test();
+			
 			
       Gimbal_Ctrl(&Gimbal);
 			

@@ -3,6 +3,22 @@
 
 #include "stm32f4xx_hal.h"
 #include "motor.h"
+#include "car.h"
+
+typedef enum
+{
+	S_Stop,
+	S_Wake,
+	S_Standby,
+	S_Shoot,
+	S_Done,
+}shoot_work_status_e;
+
+typedef enum
+{
+	F_reload,
+	F_unload,
+}feed_work_status_e;
 
 typedef struct
 {
@@ -15,6 +31,22 @@ typedef struct
 
 typedef struct
 {
+	uint8_t feed_work_command;
+	uint8_t feed_work_status;
+}Feed_work_info_t;
+
+typedef struct
+{
+	Feed_work_info_t* feed_work_info;
+	
+	uint8_t shoot_work_command;
+	uint8_t shoot_work_status;
+}shoot_work_info_t;
+
+typedef struct
+{
+	shoot_work_info_t* shoot_work_info;
+	
 	uint16_t feed_angle_target;
 	uint16_t fric_speed_target;
 	uint16_t position_speed_target;
