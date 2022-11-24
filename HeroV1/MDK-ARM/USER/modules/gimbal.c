@@ -5,6 +5,7 @@
 #include "mathematics.h"
 #include "car.h"
 #include "stdbool.h"
+#include "config_can.h"
 
 extern motor_t Gim_Yaw;
 extern motor_t Gim_Pitch;
@@ -52,9 +53,6 @@ float gimb_y_imu_angle_pid_param[7]      = {0.55,0,0,0,0,0,700};
 float gimb_p_imu_angle_in_pid_param[7]   = {-500,-7,0,0,5000,5000,28000};
 
 float gimb_p_imu_angle_pid_param[7]      = {0.75,0,0,0,0,0,500};
-
-int16_t can1_gimbal_send_buff[4];
-int16_t can2_gimbal_send_buff[4];
 
 void Gimbal_Init_All(void)
 {
@@ -329,22 +327,22 @@ void Gimbal_Yaw_Mec_Ctrl(gimbal_t* gim)
 {
 	motor_t *motor = gim->yaw_gimbal;
 	
-	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
+	can1_0x1FF_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
 	                                                        gim->info->yaw_angle_mec_measure,gim->info->yaw_speed_imu_measure,
 	                                                        gim->info->yaw_angle_target,1);
 	
-	Gimbal_Send(motor,can1_gimbal_send_buff);
+//	Gimbal_Send(motor,can1_gimbal_send_buff);
 }
 
 void Gimbal_Pitch_Mec_Ctrl(gimbal_t* gim)
 {
 	motor_t *motor = gim->pitch_gimbal;
 	
-	can2_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
+	can2_0x1FF_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.angle,&motor->pid.angle_in,
 	                                                        gim->info->pitch_angle_mec_measure,gim->info->pitch_speed_imu_measure,
 	                                                        gim->info->pitch_angle_target,1);
 	
-	Gimbal_Send(motor,can2_gimbal_send_buff);
+//	Gimbal_Send(motor,can2_gimbal_send_buff);
 }
 
 
@@ -354,11 +352,11 @@ void Gimbal_Yaw_Imu_Ctrl(gimbal_t* gimbal)
 	
 	motor_t *motor = gimbal->yaw_gimbal;
 	
-	can1_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
+	can1_0x1FF_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
 	                                                        info->yaw_angle_imu_measure,info->yaw_speed_imu_measure,
 	                                                        gimbal->info->yaw_angle_target,1);
 	
-	Gimbal_Send(motor,can1_gimbal_send_buff);
+//	Gimbal_Send(motor,can1_gimbal_send_buff);
 }
 
 void Gimbal_Pitch_Imu_Ctrl(gimbal_t* gimbal)
@@ -367,10 +365,10 @@ void Gimbal_Pitch_Imu_Ctrl(gimbal_t* gimbal)
 	
 	motor_t *motor = gimbal->pitch_gimbal;
 	
-	can2_gimbal_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
+	can2_0x1FF_send_buff[motor->id.buff_p] = motor->c_pid2(&motor->pid.imu_angle,&motor->pid.imu_angle_in,
 	                                                        info->pitch_angle_imu_measure,info->pitch_speed_imu_measure,
 	                                                        gimbal->info->pitch_angle_target,1);
 	
-	Gimbal_Send(motor,can2_gimbal_send_buff);
+//	Gimbal_Send(motor,can2_gimbal_send_buff);
 }
 

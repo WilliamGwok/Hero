@@ -7,6 +7,7 @@
 #include "imu.h"
 #include "gimbal.h"
 #include "car.h"
+#include "config_can.h"
 
 #endif
 

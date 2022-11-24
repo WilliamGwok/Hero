@@ -13,6 +13,10 @@
 #define friction_10ms_work_speed 2000
 #define friction_16ms_work_speed 3000
 
+#define feed_work_reload_time 10
+
+#define resonable_err 500
+
 #endif
 
 

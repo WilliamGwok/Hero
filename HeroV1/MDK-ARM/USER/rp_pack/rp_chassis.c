@@ -18,6 +18,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "rp_chassis.h"
 #include "drv_can.h"
+#include "config_can.h"
 
 /* Exported variables --------------------------------------------------------*/
 
@@ -324,15 +325,15 @@ void Chassis_Work(chassis_t *chassis)
 	
 	
 
-	output_current[0] = chassis->base_info.output.motor_LF_current;
-	output_current[1] = chassis->base_info.output.motor_RF_current;
-	output_current[2] = chassis->base_info.output.motor_LB_current;
-	output_current[3] = chassis->base_info.output.motor_RB_current;	
+	can1_0x200_send_buff[0] = chassis->base_info.output.motor_LF_current;
+	can1_0x200_send_buff[1] = chassis->base_info.output.motor_RF_current;
+	can1_0x200_send_buff[2] = chassis->base_info.output.motor_LB_current;
+	can1_0x200_send_buff[3] = chassis->base_info.output.motor_RB_current;	
 	
 
 	/*发送电流*/
 //	CAN_SendData(&CHASSIS_DRV_CAN_USE,CHASSIS_CAN_STD_ID,output_current);
-  CAN1_Send_With_int16_to_uint8(CHASSIS_CAN_STD_ID, output_current);
+//  CAN1_Send_With_int16_to_uint8(CHASSIS_CAN_STD_ID, output_current);
 
 }
 

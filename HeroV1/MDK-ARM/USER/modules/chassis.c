@@ -9,6 +9,7 @@
 #include "mathematics.h"
 #include "car.h"
 #include "config_chassis.h"
+#include "config_can.h"
 
 extern chassis_t Chassis;
 
