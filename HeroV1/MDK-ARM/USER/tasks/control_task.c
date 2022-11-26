@@ -1,6 +1,8 @@
 #include "control_task.h"
 
 
+//底盘左前电机又隐患，会掉线2022/11/26
+
 void control_task(void const * argument)
 {
 	car_init(&Car);

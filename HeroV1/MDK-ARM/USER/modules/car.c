@@ -83,6 +83,7 @@ void car_status_update(car_t* car)
 	{
 		car->car_move_status = sleep_car;
 		car_mode_change = true;
+		gimbal_init_ok = false;
 		car_init_ok = false;
 		car_command_init();
 	}
