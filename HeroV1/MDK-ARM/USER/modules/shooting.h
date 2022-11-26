@@ -19,6 +19,8 @@ typedef enum
 	F_reload,
 	F_unload,
 	F_static,
+	F_f_stuck,
+	F_b_stuck,
 }feed_work_status_e;
 
 typedef struct
@@ -34,9 +36,15 @@ typedef struct
 
 typedef struct
 {
+	float   angle_fix;
 	uint8_t feed_work_command;
 	uint8_t feed_work_status;
 	uint8_t feed_work_times;
+	uint8_t move_delay_cnt;
+	uint8_t stuck_delay_cnt;
+	uint8_t stuck_times_cnt;
+	uint8_t f_stuck_delay_cnt;
+	uint8_t f_stuck_times_cnt;
 }Feed_work_info_t;
 
 typedef struct
@@ -54,9 +62,9 @@ typedef struct
 	
 	
 	uint16_t feed_angle_sum_measure;
-	uint16_t feed_angle_target;
-	uint16_t fric_speed_target;
-	uint16_t position_speed_target;
+	float feed_angle_target;
+	float fric_speed_target;
+	float position_speed_target;
 }Shoot_info_t;
 
 //typedef struct

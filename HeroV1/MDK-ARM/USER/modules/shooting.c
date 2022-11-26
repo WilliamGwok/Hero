@@ -16,9 +16,9 @@
 	float 	out_max;
 */
 
-float feed_motor_position_in_pid_param[7]       = {0,0,0,0,0,0,3000};
+float feed_motor_position_in_pid_param[7]       = {10,0.4,0,0,0,0,3000};
 
-float feed_motor_position_pid_param[7]          = {0,0,0,0,0,0,10000};
+float feed_motor_position_pid_param[7]          = {0.2,0,0,0,0,0,10000};
 
 float position_motor_speed_pid_param[7]         = {0,0,0,0,0,10000,9000};
 
@@ -45,6 +45,7 @@ shoot_work_info_t work_info_shoot =
 Shoot_info_t Shoot_Info = 
 {
 	.shoot_work_info = &work_info_shoot,
+	.feed_angle_target = 0.0f,
 };
 
 Shoot_t Shoot = 
@@ -238,41 +239,94 @@ void Shoot_Work(Shoot_t*shoot)
 
 void Feed_Work(Shoot_t* shoot)
 {
-	uint8_t status = 0,command = 0;
-	uint16_t angle_target = 0,angle_measure = 0;
+	float angle_target = 0.0f,angle_measure = 0.0f;
 	
-	status = shoot->info->shoot_work_info->feed_work_info->feed_work_status;
-	command = shoot->info->shoot_work_info->feed_work_info->feed_work_command;
+	Feed_work_info_t* wkinfo = shoot->info->shoot_work_info->feed_work_info;
 	
 	angle_target = shoot->info->feed_angle_target;
 	angle_measure = shoot->feed_shoot->rx_info.angle_sum;
 	
-	switch(status)
+	switch(wkinfo->feed_work_status)
 	{
 		case F_reload:
-			if(angle_measure >= angle_target - 500)
+			if(angle_measure >= angle_target - resonable_err)
 			{
-				if(shoot->info->shoot_work_info->feed_work_info->feed_work_times < shoot->config->feed_reload_times)
+				if(wkinfo->feed_work_times < shoot->config->feed_reload_times)//目前只是转10次
 				{
-					angle_target += shoot->config->feed_reload_angle;
-				  shoot->info->shoot_work_info->feed_work_info->feed_work_times++;
+					wkinfo->move_delay_cnt++;
+					if(wkinfo->move_delay_cnt > 50)
+					{
+						angle_target += shoot->config->feed_reload_angle;
+				    wkinfo->feed_work_times++;
+						wkinfo->move_delay_cnt = 0;
+					}
 				}
 				else
 				{
-					angle_target = angle_measure;
-					Feed_Stay_Static(shoot);
+					angle_target = shoot->feed_shoot->rx_info.angle_sum;
+					Feed_Stay_Static(shoot);		
+				}
+			}
+			else
+			{
+				if(abs(shoot->feed_shoot->rx_info.speed) <= 2)
+				{
+					wkinfo->stuck_delay_cnt++;
+					if(wkinfo->stuck_delay_cnt >= 150)//堵塞确认
+					{
+						wkinfo->stuck_times_cnt++;
+						if(wkinfo->stuck_times_cnt < 3)//嗯，好像没上够弹丸就堵了呢
+						{
+							wkinfo->feed_work_status = F_f_stuck;
+							wkinfo->stuck_delay_cnt = 0;
+					    angle_target = angle_measure - 7000;
+						  wkinfo->angle_fix = angle_target - angle_measure + 7000;
+						}
+						else//不对，已经补满了！
+						{
+							angle_target = angle_measure;
+							Feed_Stay_Static(shoot);
+						}
+					}
+				}
+				else
+				{
+					wkinfo->stuck_delay_cnt = 0;
 				}
 			}
 			break;
 		case F_unload:
 			break;
+		case F_f_stuck:
+			if(angle_measure >= angle_target - resonable_err)//准备好再次冲击原来的目标
+			{
+				angle_target += wkinfo->angle_fix;
+				wkinfo->feed_work_times++;
+				wkinfo->feed_work_status = F_reload;
+			}
+			else
+			{
+				if(abs(shoot->feed_shoot->rx_info.speed) <= 2)
+				{
+					wkinfo->stuck_delay_cnt = 0;
+					if(wkinfo->stuck_delay_cnt >= 150)//哼，向后走又堵住了呢
+					{
+						wkinfo->feed_work_status = F_reload;
+						wkinfo->stuck_delay_cnt = 0;
+						angle_target += wkinfo->angle_fix;//不管了，再向前冲一次吧
+					}
+				}
+			}
+			break;
+		case F_b_stuck:
+			break;
 		case F_static:
 			angle_target = angle_measure;
-		  switch(command)
+		  switch(wkinfo->feed_work_command)
 			{
 				case F_reload:
-					status = F_reload;
-				  command = F_static;
+						wkinfo->feed_work_status = F_reload;
+				    wkinfo->feed_work_command = F_static;
 					break;
 				case F_unload:
           break;				
@@ -285,37 +339,27 @@ void Feed_Work(Shoot_t* shoot)
 	}
 	
 	shoot->info->feed_angle_target = angle_target;
-	shoot->info->shoot_work_info->feed_work_info->feed_work_status = status;
-	shoot->info->shoot_work_info->feed_work_info->feed_work_command = command;
 	
 	shoot->feed_ctrl(shoot);
 }
 
 void Feed_Stay_Static(Shoot_t* shoot)
 {
-	shoot->info->shoot_work_info->feed_work_info->feed_work_status = F_static;
-	shoot->info->shoot_work_info->feed_work_info->feed_work_times = 0;
+	Feed_work_info_t* wkinfo = shoot->info->shoot_work_info->feed_work_info;
 	
+	wkinfo->stuck_delay_cnt = 0;
+	wkinfo->stuck_times_cnt = 0;
+	wkinfo->feed_work_times = 0;
+	wkinfo->feed_work_status = F_static;
+	wkinfo->feed_work_command = F_static;
 }
 
 void Shooting_Test(void)
 {
-//	Shoot.info->fric_speed_target = friction_work_speed_init;
-//	Shoot.info->feed_angle_target = feed_reload_work_angle;
-//	
-//	if(Shoot.feed_shoot->pid.position.info.err <= 1)
-//	{
-//		Shoot.feed_shoot->rx_info.angle_sum = 0;
-//	}
-//	Shoot.l_fric_ctrl(&Shoot);
-//	Shoot.r_fric_ctrl(&Shoot);
-//	Shoot.feed_ctrl(&Shoot);
 	Shoot_Commmand_React(&Shoot);
 	
 	Shoot_Work(&Shoot);
 	Feed_Work(&Shoot);
-	
-//	Shooting_Send();
 	
 	Shoot_Command_Init(&Shoot);
 	
@@ -324,10 +368,7 @@ void Shooting_Test(void)
 
 void Shooting_Ctrl(Shoot_t* shoot)
 {
-	
 	Shoot_Commmand_React(shoot);
-	
-	
 	
 	Shoot_Command_Init(shoot);
 }
@@ -336,46 +377,11 @@ void Shooting_Ctrl(Shoot_t* shoot)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-//void Shooting_Send(motor_t* motor,int16_t *buff)
-//{
-//  if(motor->id.drive_type == M_CAN1)
-//	{
-//		CAN1_Send_With_int16_to_uint8(motor->id.tx_id,buff);
-//	}
-//	if(motor->id.drive_type == M_CAN2)
-//	{
-//		CAN2_Send_With_int16_to_uint8(motor->id.tx_id,buff);
-//	}
-//}
-
-void Shooting_Send(void)
-{
-		CAN1_Send_With_int16_to_uint8(0x1FF,can1_0x1FF_send_buff);
-	
-		CAN2_Send_With_int16_to_uint8(0x1FF,can2_0x1FF_send_buff);
-	
-	  CAN2_Send_With_int16_to_uint8(0x200,can2_0x200_send_buff);
-}
-
 void Feed_Ctrl(Shoot_t* shoot)
 {
 	motor_t* motor = shoot->feed_shoot;
 	
-	can1_0x1FF_send_buff[motor->id.buff_p] = motor->c_posit(motor,shoot->info->feed_angle_target);//不能这样写
-	
-//  Shooting_Send(motor,can1_shoot_send_buff);
+	can1_0x1FF_send_buff[motor->id.buff_p] = motor->c_posit(motor,shoot->info->feed_angle_target);
 }
 
 void Position_Ctrl(Shoot_t* shoot)
@@ -383,8 +389,6 @@ void Position_Ctrl(Shoot_t* shoot)
 	motor_t* motor = shoot->position_shoot;
 	
 	can2_0x200_send_buff[motor->id.buff_p] = motor->c_speed(motor,shoot->info->position_speed_target);
-	
-//	Shooting_Send(motor,can2_shoot_send_buff);
 }
 
 void Right_Friction_Ctrl(Shoot_t* shoot)
@@ -392,8 +396,6 @@ void Right_Friction_Ctrl(Shoot_t* shoot)
 	motor_t* motor = shoot->right_friction_shoot;
 	
 	can2_0x1FF_send_buff[motor->id.buff_p] = motor->c_speed(motor,shoot->info->fric_speed_target);
-	
-//	Shooting_Send(motor,can2_shoot_send_buff);
 }
 
 void Left_Friction_Ctrl(Shoot_t* shoot)
@@ -402,7 +404,6 @@ void Left_Friction_Ctrl(Shoot_t* shoot)
 	
 	can2_0x1FF_send_buff[motor->id.buff_p] = motor->c_speed(motor,(-shoot->info->fric_speed_target));
 	
-//	Shooting_Send(motor,can2_shoot_send_buff);
 }
 
 

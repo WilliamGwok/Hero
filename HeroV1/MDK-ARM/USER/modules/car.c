@@ -45,9 +45,9 @@ void car_command_init(void)
 
 void car_ctrl(car_t* car)
 {
-	car_ctrl_mode_update(car);
-	
 	car_status_update(car);
+	
+	car_ctrl_mode_update(car);
 }
 
 void car_ctrl_mode_update(car_t* car)

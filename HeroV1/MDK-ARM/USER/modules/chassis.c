@@ -11,6 +11,7 @@
 #include "config_chassis.h"
 #include "config_can.h"
 
+extern bool gimbal_init_ok;
 extern chassis_t Chassis;
 
 Chassis_InitTypeDef chassis_all;
@@ -193,8 +194,8 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 		default:
 			break;
 	}
-	
-	Chassis.work(&Chassis);
+
+		Chassis.work(&Chassis);
 }
 
 

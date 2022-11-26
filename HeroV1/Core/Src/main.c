@@ -98,8 +98,8 @@ int main(void)
   MX_USART2_UART_Init();
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
+	Device_Init();	
   Driver_Init();
-	Device_Init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
