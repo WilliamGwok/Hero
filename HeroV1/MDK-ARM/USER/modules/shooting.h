@@ -26,12 +26,12 @@ typedef enum
 typedef struct
 {
 	uint16_t feed_reload_angle;
+	uint16_t feed_reload_times;
 	uint16_t fric_speed_init;
 	uint16_t fric_10ms_speed;
 	uint16_t fric_16ms_speed;
 	uint16_t position_work_speed;
-	uint16_t feed_reload_times;
-	
+	uint16_t position_work_time;
 }Shoot_config_t;
 
 typedef struct
@@ -54,6 +54,7 @@ typedef struct
 	uint8_t shoot_work_command;
 	uint8_t shoot_work_status;
 	uint8_t standby_yes;
+	uint16_t shoot_work_cnt;
 }shoot_work_info_t;
 
 typedef struct

@@ -20,7 +20,7 @@ float feed_motor_position_in_pid_param[7]       = {10,0.4,0,0,0,0,3000};
 
 float feed_motor_position_pid_param[7]          = {0.2,0,0,0,0,0,10000};
 
-float position_motor_speed_pid_param[7]         = {0,0,0,0,0,10000,9000};
+float position_motor_speed_pid_param[7]         = {15,0.4,0,0,0,10000,9000};
 
 float friction_left_motor_speed_pid_param[7]    = {27,3,0,0,0,6000,10000};
 
@@ -34,6 +34,7 @@ Shoot_config_t shoot_config =
 	.fric_16ms_speed = friction_16ms_work_speed,
 	.position_work_speed = position_work_speed_init,
 	.feed_reload_times = feed_work_reload_time,
+	.position_work_time = position_work_time_tick
 };
 
 Feed_work_info_t work_info_feed;
@@ -70,6 +71,7 @@ void Shooting_Init_All(void)
 	feed_motor.pid_init(&feed_motor.pid.position,feed_motor_position_pid_param);
 	friction_left_motor.pid_init(&friction_left_motor.pid.speed,friction_left_motor_speed_pid_param);
 	friction_right_motor.pid_init(&friction_right_motor.pid.speed,friction_right_motor_speed_pid_param);
+	position_motor.pid_init(&position_motor.pid.speed,position_motor_speed_pid_param);
 	
 	Shoot.feed_shoot = &feed_motor;
 	Shoot.position_shoot = &position_motor;
@@ -173,6 +175,14 @@ void Shoot_Work(Shoot_t*shoot)
 		  shoot->info->shoot_work_info->feed_work_info->feed_work_status = F_static;
 			break;
 		case S_Shoot:
+			shoot->info->position_speed_target = -shoot->config->position_work_speed;
+		  shoot->info->shoot_work_info->shoot_work_cnt++;
+		  if(shoot->info->shoot_work_info->shoot_work_cnt >= shoot->config->position_work_time)
+			{
+				shoot->info->position_speed_target = 0;
+				shoot->info->shoot_work_info->shoot_work_cnt = 0;
+				shoot->info->shoot_work_info->shoot_work_status = S_Wake;
+			}
 			if(shoot->info->shoot_work_info->shoot_work_command == S_Stop)
 			{
 				shoot->info->shoot_work_info->shoot_work_status = S_Stop;
@@ -186,10 +196,12 @@ void Shoot_Work(Shoot_t*shoot)
 			{
 				shoot->info->shoot_work_info->standby_yes = 1;
 				shoot->info->shoot_work_info->shoot_work_status = S_Done;
+				shoot->info->shoot_work_info->shoot_work_cnt = 0;
 			}
 		  if(shoot->info->shoot_work_info->shoot_work_command == S_Stop)
 			{
 				shoot->info->shoot_work_info->shoot_work_status = S_Stop;
+				shoot->info->shoot_work_info->shoot_work_cnt = 0;
 			}
 			break;
 		case S_Standby:
@@ -234,6 +246,7 @@ void Shoot_Work(Shoot_t*shoot)
 	
 	shoot->l_fric_ctrl(shoot);
 	shoot->r_fric_ctrl(shoot);
+	shoot->position_ctrl(shoot);
 	
 }
 
@@ -254,7 +267,7 @@ void Feed_Work(Shoot_t* shoot)
 				if(wkinfo->feed_work_times < shoot->config->feed_reload_times)//目前只是转10次
 				{
 					wkinfo->move_delay_cnt++;
-					if(wkinfo->move_delay_cnt > 50)
+					if(wkinfo->move_delay_cnt > 100)
 					{
 						angle_target += shoot->config->feed_reload_angle;
 				    wkinfo->feed_work_times++;
