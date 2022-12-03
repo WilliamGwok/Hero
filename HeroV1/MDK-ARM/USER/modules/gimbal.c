@@ -169,15 +169,24 @@ void Gimbal_Command_React(gimbal_t* gimbal)
 {
 	if(gim_left_turn_90 == true)
 	{
-		
+		if(Car.car_move_status == imu_car)
+		{
+			gimbal->info->yaw_angle_target -= (0.25f * 8191.0f);
+		}
 	}
 	if(gim_right_turn_90 == true)
 	{
-		
+		if(Car.car_move_status == imu_car)
+		{
+			gimbal->info->yaw_angle_target += (0.25f * 8191.0f);
+		}
 	}
 	if(gim_head_turn == true)
 	{
-		
+		if(Car.car_move_status == imu_car)
+		{
+			gimbal->info->yaw_angle_target += 4096.0f;
+		}
 	}
 }
 
@@ -195,11 +204,14 @@ void Gimbal_Work(gimbal_t* gimbal)
 			switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
-					gimbal->info->yaw_angle_target += rc.base_info->ch0 / 100.f;
+					gimbal->info->yaw_angle_target += rc.base_info->ch0 / 100.0f;
 				  Gimbal_Yaw_Angle_Check(gimbal);
 					gimbal->yaw_imu_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
+					gimbal->info->yaw_angle_target += rc.info->mouse_x_K / 100.0f;
+				  Gimbal_Yaw_Angle_Check(gimbal);
+					gimbal->yaw_imu_ctrl(gimbal);
 			    break;
 				default:
 					break;
@@ -221,11 +233,14 @@ void Gimbal_Work(gimbal_t* gimbal)
 			switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
-					gimbal->info->pitch_angle_target += rc.base_info->ch1 / 200.f;
+					gimbal->info->pitch_angle_target += (float)rc.base_info->ch1 / 200.f;
 				  Gimbal_Pitch_Angle_Check(gimbal);
 					gimbal->pitch_imu_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
+					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 3000.0f;
+				  Gimbal_Pitch_Angle_Check(gimbal);
+					gimbal->pitch_imu_ctrl(gimbal);
 			    break;
 				default:
 					break;
@@ -240,6 +255,9 @@ void Gimbal_Work(gimbal_t* gimbal)
 					gimbal->pitch_mec_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
+					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 2700.0f;
+				  Gimbal_Pitch_Angle_Check(gimbal);
+				  gimbal->pitch_mec_ctrl(gimbal);
 			    break;
 				default:
 					break;

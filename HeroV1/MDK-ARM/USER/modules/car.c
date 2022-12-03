@@ -125,8 +125,8 @@ void Rc_S2_Status_Check(car_t* car)
 	switch(rc.base_info->s2.status)
 	{
 		case up_R:
-//			car->ctrl_mode = KEY_CTRL;
-		  car->ctrl_mode =RC_CTRL;
+			car->ctrl_mode = KEY_CTRL;
+//		  car->ctrl_mode =RC_CTRL;
 		  car->car_move_command = imu_car;
 			break;
 		case mid_R:
