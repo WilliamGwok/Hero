@@ -93,22 +93,46 @@ void Chassis_Mode_Update(Chassis_Mode_t* chassis_mode)
 
 void Chassis_Command_React(Chassis_Mode_t* chassis_mode)
 {
-	if(top_car_off == true)
+	if(Car.ctrl_mode == RC_CTRL)
 	{
-		if(chassis_mode->chassis_spin_mode == C_S_top)
-		{
-			chassis_mode->chassis_spin_mode = C_S_follow;
-		}
+		if(top_car_off == true)
+	  {
+		  if(chassis_mode->chassis_spin_mode == C_S_top)
+		  {
+		  	chassis_mode->chassis_spin_mode = C_S_follow;
+		  }
+	  }
+	  if(top_car_on == true)
+	  {
+		  if(chassis_mode->chassis_move_mode == C_M_special)
+		  {
+		  	chassis_mode->chassis_spin_mode = C_S_top;
+		  }
+		  else
+		  {
+			  
+		  }
+	  }
 	}
-	if(top_car_on == true)
+	else
 	{
-		if(chassis_mode->chassis_move_mode == C_M_special)
+		if(top_switch == true)
 		{
-			chassis_mode->chassis_spin_mode = C_S_top;
-		}
-		else
-		{
-			
+			if(chassis_mode->chassis_move_mode == C_M_special)
+		  {
+				if(chassis_mode->chassis_spin_mode == C_S_top)
+				{
+					chassis_mode->chassis_spin_mode = C_S_follow;
+				}
+		  	else
+				{
+					chassis_mode->chassis_spin_mode = C_S_top;
+				}
+		  }
+		  else
+		  {
+			  
+		  }
 		}
 	}
 	/*╪Эелгпп║мсбщ*/

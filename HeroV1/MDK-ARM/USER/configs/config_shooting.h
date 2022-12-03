@@ -11,7 +11,7 @@
 #define position_work_speed_init 5400
 #define friction_work_speed_init 3000
 #define friction_10ms_work_speed 3000
-#define friction_16ms_work_speed 3000
+#define friction_16ms_work_speed 5000
 
 #define feed_work_reload_time 10
 #define position_work_time_tick 200

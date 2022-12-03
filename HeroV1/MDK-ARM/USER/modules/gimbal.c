@@ -42,9 +42,9 @@ float gimb_y_mec_angle_in_pid_param[7]   = {-500,-7,0,0,4000,4000,28000};
 
 float gimb_y_mec_angle_pid_param[7]      = {0.75,0,0,0,0,0,700};
 
-float gimb_p_mec_angle_in_pid_param[7]   = {-500,-5,0,0,5000,5000,28000};
+float gimb_p_mec_angle_in_pid_param[7]   = {-300,-6,0,0,5000,5000,28000};
 
-float gimb_p_mec_angle_pid_param[7]      = {1,0,0,0,0,0,500};
+float gimb_p_mec_angle_pid_param[7]      = {1,0,0,5,0,0,500};
 
 float gimb_y_imu_angle_in_pid_param[7]   = {-500,-7,0,0,4000,4000,28000};
 
@@ -111,7 +111,7 @@ void Gimbal_Imu_Update(gimbal_t* gimbal)
 	gimbal->info->yaw_angle_mec_measure = ave_fil_update(&mec_yaw_angle_fil,gimbal->info->yaw_angle_mec_measure,10);
 	
 	gimbal->info->pitch_angle_mec_measure = gim_pitch_middle_angle - gimbal->pitch_gimbal->rx_info.angle;
-	gimbal->info->pitch_angle_mec_measure = ave_fil_update(&mec_pitch_angle_fil,gimbal->info->pitch_angle_mec_measure,10);
+	gimbal->info->pitch_angle_mec_measure = ave_fil_update(&mec_pitch_angle_fil,gimbal->info->pitch_angle_mec_measure,15);
 }
 
 void Gimbal_Mode_Init(gimbal_t* gimbal)
@@ -148,9 +148,11 @@ void Gimbal_Mode_Update(gimbal_t* gimbal)
 			case mec_car:
 				gimbal->info->yaw_mode = G_Y_mec;
 			  gimbal->info->pitch_mode = G_P_mec;
+			  gimbal->info->pitch_angle_target = gimbal->info->pitch_angle_mec_measure;
 			  break;
 			case imu_car:
 				gimbal->info->yaw_angle_target = gimbal->info->yaw_angle_imu_measure;
+			  gimbal->info->pitch_angle_target = gimbal->info->pitch_angle_imu_measure;
 				gimbal->info->yaw_mode = G_Y_imu;
 			  gimbal->info->pitch_mode = G_P_imu;
 			default:
@@ -159,9 +161,24 @@ void Gimbal_Mode_Update(gimbal_t* gimbal)
 	}
 }
 
+extern bool gim_left_turn_90;
+extern bool gim_right_turn_90;
+extern bool gim_head_turn;
+
 void Gimbal_Command_React(gimbal_t* gimbal)
 {
-	
+	if(gim_left_turn_90 == true)
+	{
+		
+	}
+	if(gim_right_turn_90 == true)
+	{
+		
+	}
+	if(gim_head_turn == true)
+	{
+		
+	}
 }
 
 void Gimbal_Work(gimbal_t* gimbal)

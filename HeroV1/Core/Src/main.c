@@ -95,6 +95,7 @@ int main(void)
 	while(BMI_Init()!=BMI2_OK){}
   MX_CAN1_Init();
   MX_DMA_Init();
+		
   MX_USART2_UART_Init();
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */

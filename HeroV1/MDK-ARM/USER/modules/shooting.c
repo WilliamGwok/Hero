@@ -16,7 +16,7 @@
 	float 	out_max;
 */
 
-float feed_motor_position_in_pid_param[7]       = {10,0.4,0,0,0,0,3000};
+float feed_motor_position_in_pid_param[7]       = {10,0.7,0,0,0,0,3000};
 
 float feed_motor_position_pid_param[7]          = {0.2,0,0,0,0,0,10000};
 
@@ -363,6 +363,7 @@ void Feed_Stay_Static(Shoot_t* shoot)
 	wkinfo->stuck_delay_cnt = 0;
 	wkinfo->stuck_times_cnt = 0;
 	wkinfo->feed_work_times = 0;
+	wkinfo->angle_fix = 0;
 	wkinfo->feed_work_status = F_static;
 	wkinfo->feed_work_command = F_static;
 }

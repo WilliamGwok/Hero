@@ -1,9 +1,15 @@
 #include "car.h"
 #include "stdbool.h"
 #include "config_status.h"
+#include "chassis.h"
 
 bool top_car_on = false;
 bool top_car_off = false;
+bool top_switch = false;
+
+bool gim_left_turn_90 = false;
+bool gim_right_turn_90 = false;
+bool gim_head_turn = false;
 
 bool shoot_start = false;
 bool shoot_stop = false;
@@ -17,6 +23,8 @@ bool car_init_ok = false;
 
 extern bool gimbal_init_ok;
 extern bool imu_init_Y_O_N;
+
+extern Chassis_Mode_t Chassis_Mode;
 
 car_t Car;
 
@@ -35,12 +43,16 @@ void car_command_init(void)
 {
 	top_car_on = false;
   top_car_off = false;
+	top_switch = false;
 	shoot_start = false;
   shoot_stop = false;
 	shoot_standby = false;
   shoot_wake = false;
   feed_reload = false;
   feed_unload = false;
+	gim_left_turn_90 = false;
+  gim_right_turn_90 = false;
+	gim_head_turn = false;
 }
 
 void car_ctrl(car_t* car)
@@ -187,8 +199,298 @@ void Rc_Thumbwheel_Check(car_t* car)
 	}
 }
 
+
+
+
+void Key_Mouse_l_Status_Check(car_t *car)
+{
+  switch(rc.base_info->mouse_btn_l.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			shoot_start = true;
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}	
+
+void Key_Mouse_r_Status_Check(car_t *car)
+{
+  switch(rc.base_info->mouse_btn_r.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_Q_Status_Check(car_t *car)
+{
+  switch(rc.base_info->Q.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			gim_left_turn_90 = true;
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_W_Status_Check(car_t *car)
+{
+  switch(rc.base_info->W.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_E_Status_Check(car_t *car)
+{
+  switch(rc.base_info->E.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			gim_right_turn_90 = true;
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_S_Status_Check(car_t *car)
+{
+  switch(rc.base_info->S.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_D_Status_Check(car_t *car)
+{
+  switch(rc.base_info->D.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_F_Status_Check(car_t *car)
+{
+  switch(rc.base_info->F.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			top_switch = true;
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_Z_Status_Check(car_t *car)
+{
+  switch(rc.base_info->Z.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_C_Status_Check(car_t *car)
+{
+  switch(rc.base_info->C.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_V_Status_Check(car_t *car)
+{
+  switch(rc.base_info->V.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			if(car->car_move_status == imu_car)
+			{
+				gim_head_turn = true;
+			}
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_B_Status_Check(car_t *car)
+{
+  switch(rc.base_info->B.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_Shift_Status_Check(car_t *car)
+{
+  switch(rc.base_info->Shift.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
+void Key_Ctrl_Status_Check(car_t *car)
+{
+  switch(rc.base_info->Ctrl.status)
+	{
+		case relax_K:
+			break;
+		case down_K:
+			break;
+		case up_K:
+			break;
+		case short_press_K:
+			break;
+		case long_press_K:
+			break;
+		default:
+			break;
+	}
+}
+
 void Key_Status_Scan(car_t* car)
 {
-	
+	Key_Mouse_l_Status_Check(car);
+	Key_Mouse_r_Status_Check(car);
+	Key_Q_Status_Check(car);
+  Key_W_Status_Check(car);
+  Key_E_Status_Check(car);
+  Key_S_Status_Check(car);
+  Key_D_Status_Check(car);
+  Key_F_Status_Check(car);
+  Key_Z_Status_Check(car);
+  Key_C_Status_Check(car);
+  Key_V_Status_Check(car);
+  Key_B_Status_Check(car);
+  Key_Shift_Status_Check(car);
+  Key_Ctrl_Status_Check(car);
 }
 

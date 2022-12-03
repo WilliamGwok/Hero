@@ -31,6 +31,7 @@ typedef struct
 
 extern bool top_car_on;
 extern bool top_car_off;
+extern bool top_switch;
 
 extern bool shoot_start;
 extern bool shoot_stop;
@@ -38,6 +39,10 @@ extern bool shoot_standby;
 extern bool shoot_wake;
 extern bool feed_reload;
 extern bool feed_unload;
+
+extern bool gim_left_turn_90;
+extern bool gim_right_turn_90;
+extern bool gim_head_turn;
 
 extern bool car_mode_change;
 
