@@ -63,6 +63,7 @@ void Chassis_Command_Init(void)
 {
 	top_car_on = false;
   top_car_off = false;
+	top_switch = false;
 }
 
 void Chassis_Mode_Update(Chassis_Mode_t* chassis_mode)
@@ -93,49 +94,51 @@ void Chassis_Mode_Update(Chassis_Mode_t* chassis_mode)
 
 void Chassis_Command_React(Chassis_Mode_t* chassis_mode)
 {
-	if(Car.ctrl_mode == RC_CTRL)
+	switch(Car.ctrl_mode)
 	{
-		if(top_car_off == true)
-	  {
-		  if(chassis_mode->chassis_spin_mode == C_S_top)
-		  {
+		case RC_CTRL:
+			if(top_car_off == true)
+	    {
+		    if(chassis_mode->chassis_spin_mode == C_S_top)
+		    {
 		  	chassis_mode->chassis_spin_mode = C_S_follow;
-		  }
-	  }
-	  if(top_car_on == true)
-	  {
-		  if(chassis_mode->chassis_move_mode == C_M_special)
+		    }
+	    }
+	    if(top_car_on == true)
+	    {
+		    if(chassis_mode->chassis_move_mode == C_M_special)
+		    {
+		    	chassis_mode->chassis_spin_mode = C_S_top;
+		    }
+		    else
+		    {
+		  	  
+		    }
+	    }
+			break;
+		case KEY_CTRL:
+			if(top_switch == true)
 		  {
-		  	chassis_mode->chassis_spin_mode = C_S_top;
-		  }
-		  else
-		  {
-			  
-		  }
-	  }
+			  if(chassis_mode->chassis_move_mode == C_M_special)
+		    {
+			  	if(chassis_mode->chassis_spin_mode == C_S_top)
+			  	{
+			  		chassis_mode->chassis_spin_mode = C_S_follow;
+			  	}
+		    	else
+		  		{
+		  			chassis_mode->chassis_spin_mode = C_S_top;
+		  		}
+	  	  }
+		    else
+		    {
+			    
+		    }
+	  	}
+			break;
+		default:
+			break;
 	}
-	else
-	{
-		if(top_switch == true)
-		{
-			if(chassis_mode->chassis_move_mode == C_M_special)
-		  {
-				if(chassis_mode->chassis_spin_mode == C_S_top)
-				{
-					chassis_mode->chassis_spin_mode = C_S_follow;
-				}
-		  	else
-				{
-					chassis_mode->chassis_spin_mode = C_S_top;
-				}
-		  }
-		  else
-		  {
-			  
-		  }
-		}
-	}
-
 }
 
 void Chassis_Ctrl(Chassis_Mode_t* chassis_mode)
@@ -149,9 +152,6 @@ void Chassis_Ctrl(Chassis_Mode_t* chassis_mode)
 	Chassis_Command_Init();
 }
 
-
-
-
 void Chassis_Process(Chassis_Mode_t* chassis_mode)
 {
 	float err_yaw = 0.0f,double_pi = 3.1415926535f * 2.0f;
@@ -163,7 +163,8 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 //		buff = CHAS_MID_BUFF;
 //	}
 	
-	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
+//	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
+	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 3300.0f;
 	
 	err_yaw = Gimbal.info->yaw_angle_mec_measure;
 	
@@ -184,10 +185,15 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 					break;
 				case KEY_CTRL:
 					
-				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)CHASSIS_SPEED_MAX);
+//				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)CHASSIS_SPEED_MAX);
+//				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)CHASSIS_SPEED_MAX);
+//				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)CHASSIS_SPEED_MAX);
+//				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)CHASSIS_SPEED_MAX
+						
+					front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 2000.0f);
+				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 2000.0f);
+				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 2000.0f);
+				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 2000.0f);
 				
 				  Chassis.base_info.target.front_speed += front;
 				  Chassis.base_info.target.right_speed += right;

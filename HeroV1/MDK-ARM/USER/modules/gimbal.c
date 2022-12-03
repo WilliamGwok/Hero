@@ -123,7 +123,9 @@ void Gimbal_Mode_Init(gimbal_t* gimbal)
 
 void Gimbal_Command_Init(gimbal_t* gimbal)
 {
-	
+	gim_left_turn_90 = false;
+	gim_right_turn_90 = false;
+	gim_head_turn = false;
 }
 
 
@@ -160,10 +162,6 @@ void Gimbal_Mode_Update(gimbal_t* gimbal)
 		}
 	}
 }
-
-extern bool gim_left_turn_90;
-extern bool gim_right_turn_90;
-extern bool gim_head_turn;
 
 void Gimbal_Command_React(gimbal_t* gimbal)
 {
@@ -209,7 +207,7 @@ void Gimbal_Work(gimbal_t* gimbal)
 					gimbal->yaw_imu_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
-					gimbal->info->yaw_angle_target += rc.info->mouse_x_K / 100.0f;
+					gimbal->info->yaw_angle_target += rc.info->mouse_x_K / 30.0f;
 				  Gimbal_Yaw_Angle_Check(gimbal);
 					gimbal->yaw_imu_ctrl(gimbal);
 			    break;
@@ -238,7 +236,7 @@ void Gimbal_Work(gimbal_t* gimbal)
 					gimbal->pitch_imu_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
-					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 3000.0f;
+					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 20.0f;
 				  Gimbal_Pitch_Angle_Check(gimbal);
 					gimbal->pitch_imu_ctrl(gimbal);
 			    break;
@@ -255,7 +253,7 @@ void Gimbal_Work(gimbal_t* gimbal)
 					gimbal->pitch_mec_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
-					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 2700.0f;
+					gimbal->info->pitch_angle_target -= (float)rc.info->mouse_y_K / 20.0f;
 				  Gimbal_Pitch_Angle_Check(gimbal);
 				  gimbal->pitch_mec_ctrl(gimbal);
 			    break;

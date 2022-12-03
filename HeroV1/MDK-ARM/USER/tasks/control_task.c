@@ -2,6 +2,7 @@
 
 
 //底盘左前电机又隐患，会掉线2022/11/26
+//8000转底盘打滑严重
 
 void control_task(void const * argument)
 {

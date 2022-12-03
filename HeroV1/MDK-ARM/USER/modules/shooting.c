@@ -376,7 +376,6 @@ void Shooting_Test(void)
 	Feed_Work(&Shoot);
 	
 	Shoot_Command_Init(&Shoot);
-	
 }
 
 

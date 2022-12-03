@@ -207,11 +207,13 @@ void Key_Mouse_l_Status_Check(car_t *car)
   switch(rc.base_info->mouse_btn_l.status)
 	{
 		case relax_K:
+			shoot_standby = true;
 			break;
 		case down_K:
 			shoot_start = true;
 			break;
 		case up_K:
+			shoot_standby = true;
 			break;
 		case short_press_K:
 			break;
@@ -464,6 +466,7 @@ void Key_Ctrl_Status_Check(car_t *car)
 		case relax_K:
 			break;
 		case down_K:
+			
 			break;
 		case up_K:
 			break;
