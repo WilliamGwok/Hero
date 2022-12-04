@@ -154,7 +154,7 @@ void Chassis_Ctrl(Chassis_Mode_t* chassis_mode)
 
 void Chassis_Process(Chassis_Mode_t* chassis_mode)
 {
-	float err_yaw = 0.0f,double_pi = 3.1415926535f * 2.0f;
+	float err_yaw = 0.0f,err_yaw_cal = 0.0f,double_pi = 3.14159f * 2.0f;
 	int16_t front = 0,right = 0;
 	float rc_ctrl_buff = 0.0f;
 	
@@ -164,9 +164,10 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 //	}
 	
 //	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
-	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 3300.0f;
+	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
 	
 	err_yaw = Gimbal.info->yaw_angle_mec_measure;
+	err_yaw_cal = err_yaw / 8191.0f * double_pi;
 	
 	switch(chassis_mode->chassis_move_mode)
 	{
@@ -184,16 +185,11 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 	        Chassis.base_info.target.right_speed = (int16_t)((float)rc.base_info->ch2 * rc_ctrl_buff);
 					break;
 				case KEY_CTRL:
-					
-//				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-//				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-//				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-//				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)CHASSIS_SPEED_MAX
 						
-					front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 2000.0f);
-				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 2000.0f);
-				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 2000.0f);
-				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 2000.0f);
+					front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 3000.0f);
+				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 3000.0f);
+				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 3000.0f);
+				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 3000.0f);
 				
 				  Chassis.base_info.target.front_speed += front;
 				  Chassis.base_info.target.right_speed += right;
@@ -207,22 +203,18 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 		  switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
-					Chassis.base_info.target.front_speed = (rc.base_info->ch3 * rc_ctrl_buff) * cos(err_yaw/8191.0f * double_pi) - \
-		                                             (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw/8191.0f * double_pi);
-		      Chassis.base_info.target.right_speed = (rc.base_info->ch2 * rc_ctrl_buff) * cos(err_yaw/8191.0f * double_pi) + \
-		                                             (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw/8191.0f * double_pi);
+					Chassis.base_info.target.front_speed = (rc.base_info->ch3 * rc_ctrl_buff) * cos(err_yaw_cal) - (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw_cal);
+		      Chassis.base_info.target.right_speed = (rc.base_info->ch2 * rc_ctrl_buff) * cos(err_yaw_cal) + (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw_cal);
 					break;
 				case KEY_CTRL:
 					
-				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)CHASSIS_SPEED_MAX);
-				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)CHASSIS_SPEED_MAX);
+				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 3000);
+				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 3000);
+				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 3000);
+				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 3000);
 				
-				  Chassis.base_info.target.front_speed = (front * rc_ctrl_buff) * cos(err_yaw/8191.0f * double_pi) - \
-		                                             (front * rc_ctrl_buff) * sin(err_yaw/8191.0f * double_pi);
-				  Chassis.base_info.target.right_speed = (right * rc_ctrl_buff) * cos(err_yaw/8191.0f * double_pi) + \
-		                                             (right * rc_ctrl_buff) * sin(err_yaw/8191.0f * double_pi);
+				  Chassis.base_info.target.front_speed = (front * rc_ctrl_buff) * cos(err_yaw_cal) - (front * rc_ctrl_buff) * sin(err_yaw_cal);
+				  Chassis.base_info.target.right_speed = (right * rc_ctrl_buff) * cos(err_yaw_cal) + (right * rc_ctrl_buff) * sin(err_yaw_cal);
 					break;
 				default:
 					break;

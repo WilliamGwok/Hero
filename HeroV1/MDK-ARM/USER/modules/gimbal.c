@@ -207,7 +207,7 @@ void Gimbal_Work(gimbal_t* gimbal)
 					gimbal->yaw_imu_ctrl(gimbal);
 				  break;
 				case KEY_CTRL:
-					gimbal->info->yaw_angle_target += rc.info->mouse_x_K / 30.0f;
+					gimbal->info->yaw_angle_target += rc.info->mouse_x_K / 20.0f;
 				  Gimbal_Yaw_Angle_Check(gimbal);
 					gimbal->yaw_imu_ctrl(gimbal);
 			    break;

@@ -19,7 +19,7 @@
 #include "rp_chassis.h"
 #include "drv_can.h"
 #include "config_can.h"
-
+#include "ave_filter.h"
 /* Exported variables --------------------------------------------------------*/
 
 chassis_t Chassis = {
@@ -223,6 +223,7 @@ void Chassis_Speed_Limit(chassis_t *chassis)
 }
 
 
+
 /**
   * @Name    Chassis_Speed_Calculating
   * @brief   底盘速度解算（速度分解）
@@ -233,7 +234,6 @@ void Chassis_Speed_Limit(chassis_t *chassis)
 **/
 void Chassis_Speed_Calculating(chassis_t *chassis, int16_t front, int16_t right, int16_t cycle)
 {
-	
 	chassis->base_info.output.motor_LF_speed   = (  front + right + cycle);
 	chassis->base_info.output.motor_RF_speed   = (- front + right + cycle);
 	chassis->base_info.output.motor_LB_speed   = (  front - right + cycle);
@@ -269,6 +269,10 @@ void Chassis_Top_Speed_Calculating(chassis_t *chassis)
 	}
 }
 
+ave_filter_t LF_filter;
+ave_filter_t RF_filter;
+ave_filter_t LB_filter;
+ave_filter_t RB_filter;
 
 /**
   * @Name    Chassis_Pid_Calculating
@@ -280,11 +284,23 @@ void Chassis_Top_Speed_Calculating(chassis_t *chassis)
 **/
 void Chassis_Pid_Calculating(chassis_t *chassis)
 {
+	int16_t LF_fil = 0,RF_fil = 0,LB_fil = 0,RB_fil = 0;
 	
-	chassis->base_info.output.motor_LF_current = chassis->motor_LF->c_speed(chassis->motor_LF ,chassis->base_info.output.motor_LF_speed);
-	chassis->base_info.output.motor_RF_current = chassis->motor_RF->c_speed(chassis->motor_RF ,chassis->base_info.output.motor_RF_speed);
-	chassis->base_info.output.motor_LB_current = chassis->motor_LB->c_speed(chassis->motor_LB ,chassis->base_info.output.motor_LB_speed);
-	chassis->base_info.output.motor_RB_current = chassis->motor_RB->c_speed(chassis->motor_RB ,chassis->base_info.output.motor_RB_speed);
+	LF_fil = ave_fil_update(&LF_filter,chassis->motor_LF->rx_info.speed,6);
+	RF_fil = ave_fil_update(&RF_filter,chassis->motor_RF->rx_info.speed,6);
+	LB_fil = ave_fil_update(&LB_filter,chassis->motor_LB->rx_info.speed,6);
+	RB_fil = ave_fil_update(&RB_filter,chassis->motor_RB->rx_info.speed,6);
+	
+	chassis->base_info.output.motor_LF_current = chassis->motor_LF->c_pid1(&chassis->motor_LF->pid.speed,LF_fil,chassis->base_info.output.motor_LF_speed);
+	chassis->base_info.output.motor_RF_current = chassis->motor_RF->c_pid1(&chassis->motor_RF->pid.speed,RF_fil,chassis->base_info.output.motor_RF_speed);
+	chassis->base_info.output.motor_LB_current = chassis->motor_LB->c_pid1(&chassis->motor_LB->pid.speed,LB_fil,chassis->base_info.output.motor_LB_speed);
+	chassis->base_info.output.motor_RB_current = chassis->motor_RB->c_pid1(&chassis->motor_RB->pid.speed,RB_fil,chassis->base_info.output.motor_RB_speed);
+	
+	
+//	chassis->base_info.output.motor_LF_current = chassis->motor_LF->c_speed(chassis->motor_LF ,chassis->base_info.output.motor_LF_speed);
+//	chassis->base_info.output.motor_RF_current = chassis->motor_RF->c_speed(chassis->motor_RF ,chassis->base_info.output.motor_RF_speed);
+//	chassis->base_info.output.motor_LB_current = chassis->motor_LB->c_speed(chassis->motor_LB ,chassis->base_info.output.motor_LB_speed);
+//	chassis->base_info.output.motor_RB_current = chassis->motor_RB->c_speed(chassis->motor_RB ,chassis->base_info.output.motor_RB_speed);
 
 }
 /**
