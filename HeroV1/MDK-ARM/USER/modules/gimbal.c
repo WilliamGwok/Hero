@@ -6,6 +6,7 @@
 #include "car.h"
 #include "stdbool.h"
 #include "config_can.h"
+#include "vision.h"
 
 extern motor_t Gim_Yaw;
 extern motor_t Gim_Pitch;
@@ -186,6 +187,25 @@ void Gimbal_Command_React(gimbal_t* gimbal)
 			gimbal->info->yaw_angle_target += 4096.0f;
 		}
 	}
+	if(gim_auto_on == true)
+	{
+		switch(Car.car_move_status)
+		{
+			case imu_car:
+				gimbal->info->pitch_mode = G_P_auto;
+			  gimbal->info->yaw_mode = G_Y_auto;
+			  break;
+			default:
+				break;
+		}
+		gim_auto_on = false;
+	}
+	if(gim_auto_off == true)
+	{
+		gimbal->info->pitch_mode = G_P_imu;
+		gimbal->info->yaw_mode = G_Y_imu;
+		gim_auto_off = false;
+	}
 }
 
 void Gimbal_Work(gimbal_t* gimbal)
@@ -218,6 +238,16 @@ void Gimbal_Work(gimbal_t* gimbal)
 		case G_Y_mec:
 			  gimbal->info->yaw_angle_target = 0;
 			  gimbal->yaw_mec_ctrl(gimbal);
+			break;
+		case G_Y_auto:
+			if(vision.pro_info->yaw_move !=0)
+			{
+				gimbal->info->yaw_angle_target = gimbal->info->yaw_angle_imu_measure + vision.pro_info->yaw_move;
+				Gimbal_Yaw_Angle_Check(gimbal);
+				gimbal->yaw_imu_ctrl(gimbal);
+			}
+			break;
+		default:
 			break;
 	}
 	
@@ -259,6 +289,14 @@ void Gimbal_Work(gimbal_t* gimbal)
 			    break;
 				default:
 					break;
+			}
+			break;
+		case G_P_auto:
+			if(vision.pro_info->pitch_move !=0)
+			{
+				gimbal->info->pitch_angle_target = gimbal->info->pitch_angle_imu_measure + vision.pro_info->pitch_move;
+				Gimbal_Pitch_Angle_Check(gimbal);
+				gimbal->pitch_imu_ctrl(gimbal);
 			}
 			break;
 	}

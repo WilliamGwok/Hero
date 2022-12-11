@@ -10,6 +10,8 @@ bool top_switch = false;
 bool gim_left_turn_90 = false;
 bool gim_right_turn_90 = false;
 bool gim_head_turn = false;
+bool gim_auto_on = false;
+bool gim_auto_off = false;
 
 bool shoot_start = false;
 bool shoot_stop = false;
@@ -228,15 +230,17 @@ void Key_Mouse_r_Status_Check(car_t *car)
 {
   switch(rc.base_info->mouse_btn_r.status)
 	{
-		case relax_K:
-			break;
 		case down_K:
+			gim_auto_on = true;
 			break;
 		case up_K:
+			gim_auto_off = true;
 			break;
 		case short_press_K:
+			gim_auto_on = true;
 			break;
 		case long_press_K:
+			gim_auto_on = true;
 			break;
 		default:
 			break;

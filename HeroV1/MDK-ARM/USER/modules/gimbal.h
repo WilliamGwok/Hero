@@ -13,6 +13,7 @@ typedef enum
 	G_Y_init,
 	G_Y_imu,
 	G_Y_mec,
+	G_Y_auto,
 }gim_yaw_mode_e;
 
 typedef enum
@@ -21,6 +22,7 @@ typedef enum
 	G_P_init,
 	G_P_imu,
 	G_P_mec,
+	G_P_auto,
 }gim_pitch_mode_e;
 
 typedef struct

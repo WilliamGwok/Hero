@@ -43,6 +43,8 @@ extern bool feed_unload;
 extern bool gim_left_turn_90;
 extern bool gim_right_turn_90;
 extern bool gim_head_turn;
+extern bool gim_auto_on;
+extern bool gim_auto_off;
 
 extern bool car_mode_change;
 
