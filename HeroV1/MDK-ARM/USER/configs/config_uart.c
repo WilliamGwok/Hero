@@ -1,5 +1,6 @@
 #include "config_uart.h"
 #include "remote.h"
+#include "vision.h"
 
 void USART1_rxDataHandler(uint8_t *rxBuf)
 {
@@ -17,7 +18,7 @@ void USART2_rxDataHandler(uint8_t *rxBuf)
 
 void USART3_rxDataHandler(uint8_t *rxBuf)
 {
-
+	vision_receive(rxBuf);
 }
 
 void USART4_rxDataHandler(uint8_t *rxBuf)

@@ -8,6 +8,7 @@
 #include "gimbal.h"
 #include "car.h"
 #include "config_can.h"
+#include "vision.h"
 
 #endif
 

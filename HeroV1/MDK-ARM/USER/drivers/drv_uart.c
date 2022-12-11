@@ -4,7 +4,7 @@
 
 //extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
-//extern UART_HandleTypeDef huart3;
+extern UART_HandleTypeDef huart3;
 //extern UART_HandleTypeDef huart4;
 //extern UART_HandleTypeDef huart5;
 
@@ -28,6 +28,20 @@ void USART2_Init(void){
 							    (uint32_t)usart2_dma_rxbuf[0], \
 							    (uint32_t)usart2_dma_rxbuf[1], \
 							    USART2_RX_DATA_FRAME_LEN);
+}
+
+void USART3_Init(void)
+{
+	__HAL_UART_CLEAR_IDLEFLAG(&huart3);
+	__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
+	
+	//??DMA??
+	SET_BIT(huart3.Instance->CR3, USART_CR3_DMAR);	
+	
+	DMA_Start(huart3.hdmarx, \
+			  (uint32_t)&huart3.Instance->DR, \
+			  (uint32_t)usart3_dma_rxbuf, \
+			  USART3_RX_BUF_LEN);
 }
 
 void DRV_UART_IRQHandler(UART_HandleTypeDef *huart)
@@ -236,16 +250,16 @@ static void uart_rx_idle_callback(UART_HandleTypeDef* huart)
 		__HAL_DMA_SET_COUNTER(huart->hdmarx, USART2_RX_BUF_LEN);
 		__HAL_DMA_ENABLE(huart->hdmarx);
 	}
-//	else if (huart == &huart3)
-//	{
-//		/* clear DMA transfer complete flag */
-//		__HAL_DMA_DISABLE(huart->hdmarx);
-//		/* handle dbus data dbus_buf from DMA */
-//		USART3_rxDataHandler(usart3_dma_rxbuf);
-//		memset(usart3_dma_rxbuf, 0, USART3_RX_BUF_LEN);
-//		/* restart dma transmission */	  
-//		__HAL_DMA_ENABLE(huart->hdmarx);
-//	}
+	else if (huart == &huart3)
+	{
+		/* clear DMA transfer complete flag */
+		__HAL_DMA_DISABLE(huart->hdmarx);
+		/* handle dbus data dbus_buf from DMA */
+		USART3_rxDataHandler(usart3_dma_rxbuf);
+		memset(usart3_dma_rxbuf, 0, USART3_RX_BUF_LEN);
+		/* restart dma transmission */	  
+		__HAL_DMA_ENABLE(huart->hdmarx);
+	}
 //	else if (huart == &huart4)
 //	{
 //		/* clear DMA transfer complete flag */

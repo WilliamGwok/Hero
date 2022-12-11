@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 
 void USART2_Init(void);
+void USART3_Init(void);
 
 void DRV_UART_IRQHandler(UART_HandleTypeDef *huart);
 

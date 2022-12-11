@@ -49,6 +49,7 @@
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId Control_TaskHandle;
+osThreadId Realtime_TaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -57,6 +58,7 @@ osThreadId Control_TaskHandle;
 
 void StartDefaultTask(void const * argument);
 void control_task(void const * argument);
+void realtime_task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -111,6 +113,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(Control_Task, control_task, osPriorityNormal, 0, 1024);
   Control_TaskHandle = osThreadCreate(osThread(Control_Task), NULL);
 
+  /* definition and creation of Realtime_Task */
+  osThreadDef(Realtime_Task, realtime_task, osPriorityNormal, 0, 1024);
+  Realtime_TaskHandle = osThreadCreate(osThread(Realtime_Task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -151,6 +157,24 @@ __weak void control_task(void const * argument)
     osDelay(1);
   }
   /* USER CODE END control_task */
+}
+
+/* USER CODE BEGIN Header_realtime_task */
+/**
+* @brief Function implementing the Realtime_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_realtime_task */
+__weak void realtime_task(void const * argument)
+{
+  /* USER CODE BEGIN realtime_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END realtime_task */
 }
 
 /* Private application code --------------------------------------------------*/

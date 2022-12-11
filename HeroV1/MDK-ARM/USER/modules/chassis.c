@@ -18,6 +18,11 @@ Chassis_InitTypeDef chassis_all;
 
 Chassis_Mode_t Chassis_Mode;
 
+Chassis_Config_Info_t Chassis_Config = 
+{
+	.speed_max = chassis_speed_max_init,
+};
+
 int16_t can1_chassis_send_buff[4];
 
 float chassis_speed_pid_param[7] = {8.0f,0.33f,0,0,0,6000,15000};
@@ -152,6 +157,11 @@ void Chassis_Ctrl(Chassis_Mode_t* chassis_mode)
 	Chassis_Command_Init();
 }
 
+int16_t ch3_now = 0;
+int16_t ch2_now = 0;
+int16_t ch3_last = 0;
+int16_t ch2_last = 0;
+
 void Chassis_Process(Chassis_Mode_t* chassis_mode)
 {
 	float err_yaw = 0.0f,err_yaw_cal = 0.0f,double_pi = 3.14159f * 2.0f;
@@ -162,12 +172,12 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 //	{
 //		buff = CHAS_MID_BUFF;
 //	}
-	
-//	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
-	rc_ctrl_buff = (float)CHASSIS_SPEED_MAX / 660.0f;
+	rc_ctrl_buff = Chassis_Config.speed_max / 660;
 	
 	err_yaw = Gimbal.info->yaw_angle_mec_measure;
 	err_yaw_cal = err_yaw / 8191.0f * double_pi;
+	
+	
 	
 	switch(chassis_mode->chassis_move_mode)
 	{
@@ -181,40 +191,93 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 			switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
-					Chassis.base_info.target.front_speed = (int16_t)((float)rc.base_info->ch3 * rc_ctrl_buff);
-	        Chassis.base_info.target.right_speed = (int16_t)((float)rc.base_info->ch2 * rc_ctrl_buff);
+						Chassis.base_info.target.front_speed = (int16_t)((float)rc.base_info->ch3 * 4);
+						Chassis.base_info.target.right_speed = (int16_t)((float)rc.base_info->ch2 * 4);
 					break;
 				case KEY_CTRL:
-						
-					front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 3000.0f);
-				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 3000.0f);
-				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 3000.0f);
-				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 3000.0f);
+					front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)Chassis_Config.speed_max);
+				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)Chassis_Config.speed_max);
+				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)Chassis_Config.speed_max);
+				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)Chassis_Config.speed_max);
 				
-				  Chassis.base_info.target.front_speed += front;
-				  Chassis.base_info.target.right_speed += right;
+				  Chassis.base_info.target.front_speed = front;
+				  Chassis.base_info.target.right_speed = right;
 					break;
 				default:
 					break;
 			}
 		  break;
 		case C_M_special:
-			
 		  switch(Car.ctrl_mode)
 			{
 				case RC_CTRL:
+					ch3_now = rc.base_info->ch3;
+				  if(ch3_now != 0)
+					{
+						if(abs(ch3_now - ch3_last) > 30)
+					  {
+						  ch3_now += 30 * sgn(ch3_now - ch3_last);
+						  ch3_last = ch3_now;
+					  }
+						else
+						{
+							ch3_last = ch3_now;
+						}
+					}
+					else
+					{
+						if(abs(ch3_now - ch3_last) > 40)
+						{
+							ch3_now += 60 * sgn(ch3_now - ch3_last);
+						}
+						else
+						{
+							ch3_now = 0;
+							ch3_last = ch3_now;
+						}
+					}
+					ch2_now = rc.base_info->ch2;
+				  if(ch2_now != 0)
+					{
+						if(abs(ch2_now - ch2_last) > 30)
+					  {
+						  ch2_now += 30 * sgn(ch2_now - ch2_last);
+						  ch2_last = ch2_now;
+					  }
+						else
+						{
+							ch2_last = ch2_now;
+						}
+					}
+					else
+					{
+						if(abs(ch2_now - ch2_last) > 40)
+						{
+							ch2_now += 60 * sgn(ch2_now - ch2_last);
+						}
+						else
+						{
+							ch2_now = 0;
+							ch2_last = ch2_now;
+						}
+					}
 					Chassis.base_info.target.front_speed = (rc.base_info->ch3 * rc_ctrl_buff) * cos(err_yaw_cal) - (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw_cal);
 		      Chassis.base_info.target.right_speed = (rc.base_info->ch2 * rc_ctrl_buff) * cos(err_yaw_cal) + (rc.base_info->ch3 * rc_ctrl_buff) * sin(err_yaw_cal);
 					break;
 				case KEY_CTRL:
-					
-				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * 3000);
-				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * 3000);
-				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * 3000);
-				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * 3000);
+//				  front += (int16_t)((float)rc.base_info->W.cnt / (float)KEY_W_CNT_MAX * (float)Chassis_Config.speed_max);
+//				  front -= (int16_t)((float)rc.base_info->S.cnt / (float)KEY_S_CNT_MAX * (float)Chassis_Config.speed_max);
+//				  right += (int16_t)((float)rc.base_info->D.cnt / (float)KEY_D_CNT_MAX * (float)Chassis_Config.speed_max);
+//				  right -= (int16_t)((float)rc.base_info->A.cnt / (float)KEY_A_CNT_MAX * (float)Chassis_Config.speed_max);
 				
-				  Chassis.base_info.target.front_speed = (front * rc_ctrl_buff) * cos(err_yaw_cal) - (front * rc_ctrl_buff) * sin(err_yaw_cal);
-				  Chassis.base_info.target.right_speed = (right * rc_ctrl_buff) * cos(err_yaw_cal) + (right * rc_ctrl_buff) * sin(err_yaw_cal);
+//				  Chassis.base_info.target.front_speed = (front * rc_ctrl_buff) * cos(err_yaw_cal) - (front * rc_ctrl_buff) * sin(err_yaw_cal);
+//				  Chassis.base_info.target.right_speed = (right * rc_ctrl_buff) * cos(err_yaw_cal) + (right * rc_ctrl_buff) * sin(err_yaw_cal);
+				  front = (front * rc_ctrl_buff) * cos(err_yaw_cal) - (front * rc_ctrl_buff) * sin(err_yaw_cal);
+				  right = (right * rc_ctrl_buff) * cos(err_yaw_cal) + (right * rc_ctrl_buff) * sin(err_yaw_cal);
+					
+				  Chassis.base_info.target.front_speed = front;
+				  Chassis.base_info.target.right_speed = right;
+				
 					break;
 				default:
 					break;
@@ -258,8 +321,8 @@ void Chassis_Process(Chassis_Mode_t* chassis_mode)
 		default:
 			break;
 	}
-
-		Chassis.work(&Chassis);
+	
+	Chassis.work(&Chassis);
 }
 
 

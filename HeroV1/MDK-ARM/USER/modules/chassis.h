@@ -38,6 +38,8 @@ typedef struct
 	uint16_t top_speed_level_1;
 	
 	uint16_t top_speed_level_2;
+	
+	int16_t speed_max;
 }Chassis_Config_Info_t;
 
 extern Chassis_Mode_t Chassis_Mode;

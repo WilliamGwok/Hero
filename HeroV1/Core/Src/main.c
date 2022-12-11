@@ -91,13 +91,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-	HAL_Delay(500);
-	while(BMI_Init()!=BMI2_OK){}
   MX_CAN1_Init();
   MX_DMA_Init();
-		
   MX_USART2_UART_Init();
   MX_CAN2_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 	Device_Init();	
   Driver_Init();

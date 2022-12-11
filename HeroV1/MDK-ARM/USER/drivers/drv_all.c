@@ -14,6 +14,8 @@ void Driver_Init(void)
   CAN2_Init();
 	
 	USART2_Init();
+	
+	USART3_Init();
 }
 
 void Device_Init(void)

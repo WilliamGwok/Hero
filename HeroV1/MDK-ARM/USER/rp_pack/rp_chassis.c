@@ -313,7 +313,7 @@ void Chassis_Pid_Calculating(chassis_t *chassis)
 **/
 void Chassis_Work(chassis_t *chassis)
 {
-	int16_t output_current[4];
+//	int16_t output_current[4];
 	
 	int16_t front = chassis->base_info.target.front_speed;
 	int16_t right = chassis->base_info.target.right_speed;
