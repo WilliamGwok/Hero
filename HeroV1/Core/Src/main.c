@@ -86,11 +86,16 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+	/*
+  HAL_Delay(500);
+	while(BMI_Init()!=BMI2_OK){}
+	*/
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+	HAL_Delay(500);
+	while(BMI_Init()!=BMI2_OK){}
   MX_CAN1_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
